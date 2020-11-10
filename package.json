@@ -22,7 +22,8 @@
     "mongoose": "^5.9.26",
     "nodemailer": "^6.4.11",
     "pm2": "^4.5.0",
-    "uuid": "^8.3.0"
+    "uuid": "^8.3.0",
+    "validator": "^13.1.17"
   },
   "devDependencies": {
     "env-cmd": "^10.1.0",
