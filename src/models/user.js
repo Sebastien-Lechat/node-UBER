@@ -68,17 +68,6 @@ const userSchema = mongoose.Schema({
             type: Boolean
         }
     },
-    verify_phone: { // Also use when phone is changed
-        code: {
-            type: String
-        },
-        date: {
-            type: Number
-        },
-        verified: {
-            type: Boolean
-        }
-    },
     avatar: {
         type: String
     },
@@ -185,10 +174,7 @@ userSchema.methods.generateJSON = async function () {
 
 userSchema.methods.generateAccountJSON = async function () {
     const user = this;
-
     const ret = await user.generateJSON();
-
-    if (user.verify_phone && user.verify_phone.verified) ret.verify_phone = true;
     if (user.double_authentification && user.double_authentification.activated) ret.double_authentification = true;
     return ret;
 }
