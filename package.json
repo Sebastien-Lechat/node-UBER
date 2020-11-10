@@ -8,7 +8,7 @@
     "test": "test"
   },
   "scripts": {
-    "start": "pm2 kill && pm2 start main.js --watch && pm2 logs",
+    "start": "pm2 kill && pm2 start app.js --watch && pm2 logs",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Lechat Sébastien Razafimahatratra Emilie",
