@@ -88,6 +88,19 @@ const userSchema = mongoose.Schema({
     }
 }, { timestamps: true })
 
+function genCodeDate() {
+    return {
+        date: Date.now(),
+        code: between(100000, 999999)
+    };
+}
+
+function between(min, max) {
+    return Math.floor(
+        Math.random() * (max - min + 1) + min
+    )
+}
+
 userSchema.pre('save', async function (next) {
     // Hash the password before saving the user model
     const user = this;
@@ -98,6 +111,100 @@ userSchema.pre('save', async function (next) {
     }
     next();
 })
+
+userSchema.methods.generateAuthToken = async function () {
+    // Generate an auth token for the user
+    const user = this;
+    user.token = await jwt.sign({ _id: user._id }, process.env.JWT_KEY, { expiresIn: '96h' /*'15m'*/ });
+    user.connexionDate = Date.now();
+    await user.save(); // time to 1h
+    return user.token;
+}
+
+userSchema.methods.generateAuthRefreshToken = async function () {
+    // Generate an auth refresh token for the user
+    const user = this;
+    user.refresh_token = await jwt.sign({ _id: user._id }, process.env.JWT_KEY);
+    user.connexionDate = Date.now();
+    await user.save();
+    return user.refresh_token;
+}
+
+userSchema.methods.generateResetPasswordCode = async function () {
+    const user = this;
+
+    user.reset_password = genCodeDate();
+    await user.save();
+    return user.reset_password;
+}
+
+userSchema.methods.generateEmailVerifyCode = async function () {
+    const user = this;
+
+    if (user.verify_email && user.verify_email.verified) return false;
+
+    user.verify_email = genCodeDate();
+    await user.save();
+    return user.verify_email;
+}
+
+userSchema.methods.doubleAuthentification = async function () {
+    const user = this;
+    const activated = user.double_authentification.activated;
+
+    user.double_authentification = genCodeDate();
+    user.double_authentification.activated = activated;
+    await user.save();
+
+    sendEmail(user.email, 'no-reply', user.name , user.double_authentification.code);
+    return user.double_authentification;
+}
+
+userSchema.methods.resetDoubleAuthentification = async function () {
+    const user = this;
+
+    user.double_authentification.code = undefined;
+    user.double_authentification.date = undefined;
+    await user.save();
+}
+
+userSchema.methods.generateJSON = async function () {
+    const user = this;
+
+    const ret = {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        phone: user.phone,
+        connexionDate: user.connexionDate,
+        createdAt: user.createdAt,
+        hasAvatar: user.avatar && user.avatar !== ''
+    }
+    return ret;
+}
+
+userSchema.methods.generateAccountJSON = async function () {
+    const user = this;
+
+    const ret = await user.generateJSON();
+
+    if (user.verify_phone && user.verify_phone.verified) ret.verify_phone = true;
+    if (user.double_authentification && user.double_authentification.activated) ret.double_authentification = true;
+    return ret;
+}
+
+userSchema.statics.findByCredentials = async (email, password) => {
+    // Search for a user by email and password.
+    const user = await User.findOne({ email });
+    if (!user) {
+        throw { success: false, message: "Invalid login credentials" };
+    }
+    const isPasswordMatch = await bcrypt.compare(password, user.password);
+    if (!isPasswordMatch) {
+        throw { success: false, message: "Invalid login credentials" };
+    }
+    return user;
+}
 
 const User = mongoose.model('user', userSchema);
 
