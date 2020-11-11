@@ -20,7 +20,6 @@ router.post('/register', async(req, res) => {
         });
     } catch (error) {
         error.success = false;
-        console.log(error)
         res.status(400).send(error);
     }
 })
@@ -38,7 +37,7 @@ router.post('/login', async(req, res) => {
         if (!user.verify_email || !user.verify_email.verified)
             return res.status(400).send({ success: false, message: 'Email address not verified' });
 
-        if (user.verify_phone && user.verify_phone.verified && user.double_authentification && user.double_authentification.activated) {
+        if (user.verify_email && user.verify_email.verified && user.double_authentification && user.double_authentification.activated) {
             if (!code) return res.status(400).send({ success: false, message: 'Double authentification is activated, code is required' });
             const time = (Date.now() - user.double_authentification.date) / 1000;
             if (time > 600) return res.status(400).send({ success: false, message: 'Code is no longer valid' });
@@ -80,7 +79,7 @@ router.post('/request-double-authentification', async(req, res) => {
     }
 })
 
-router.post('/double-authentification', async(req, res) => {
+router.post('/double-authentification', Auth.AuthentificationUser, async(req, res) => {
     // Request code for double authentification
     try {
         const { allow } = req.body;
@@ -147,7 +146,7 @@ router.post('/verify-email', async(req, res) => {
     }
 })
 
-router.get('/', async(req, res) => {
+router.get('/', Auth.AuthentificationUser, async(req, res) => {
     // View logged in user profile
     const user = req.user;
 
@@ -157,7 +156,7 @@ router.get('/', async(req, res) => {
     res.send(ret);
 })
 
-router.put('/', async(req, res) => {
+router.put('/', Auth.AuthentificationUser, async(req, res) => {
     // Edit user profile
     try {
         const user = req.user;
@@ -166,7 +165,7 @@ router.put('/', async(req, res) => {
 
         if (!password) return res.status(400).send({ success: false, message: 'Invalid body' });
         const isPasswordMatch = await bcrypt.compare(password, user.password);
-        if (!isPasswordMatch) return res.status(400).send({ success: false, message: 'Invalid login credentials' });
+        if (!isPasswordMatch) return res.status(400).send({ success: false, message: 'Invalid credentials' });
 
         if (email && email != user.email) user.verify_email = undefined;
         if (phone && phone != user.phone) user.verify_phone = undefined;
@@ -189,7 +188,7 @@ router.put('/', async(req, res) => {
     }
 })
 
-router.delete('/phone', async(req, res) => {
+router.delete('/phone', Auth.AuthentificationUser, async(req, res) => {
     const user = req.user;
 
     user.phone = undefined;
@@ -199,5 +198,169 @@ router.delete('/phone', async(req, res) => {
 
     res.send({ success: true });
 });
+
+router.post('/refresh-token', async(req, res) => {
+    // Refresh Token
+    try {
+        const { id, refresh_token } = req.body;
+
+        const user = await User.findOne({ _id: id });
+        if (!user) return res.status(400).send({ success: false, message: 'Invalid id' });
+
+        if (refresh_token !== user.refresh_token) return res.status(400).send({ success: false, message: 'Invalid token' });
+
+        const ret = await user.generateAccountJSON();
+        ret.success = true;
+        ret.token = await user.generateAuthToken();
+        ret.refresh_token = await user.generateAuthRefreshToken();
+        res.send(ret);
+    } catch (error) {
+        error.success = false;
+        res.status(400).send(error);
+    }
+})
+
+router.post('/request-reset-password', async(req, res) => {
+    // Reset password with code
+    try {
+        const { email, type } = req.body;
+        if (!email || !type) return res.status(400).send({ success: false, message: "Invalid body" });
+
+        const user = await User.findOne({ email });
+        if (!user) return res.status(400).send({ success: false });
+        const reset_password = await user.generateResetPasswordCode();
+
+        if (type === 'email') {
+            sendEmail(user.email, 'no-reply', Messages.omculCodeMessage(user.name, reset_password.code))
+        }
+
+        return res.status(200).send({ success: true });
+    } catch (error) {
+        error.success = false;
+        res.status(400).send(error);
+    }
+})
+
+router.post('/reset-password', async(req, res) => {
+    // Reset password with code
+    try {
+        const { email, code, password } = req.body;
+        if (!email || !code || !password) return res.status(400).send({ success: false, message: "Invalid body" });
+
+        const user = await User.findOne({ email });
+        if (!user || !user.reset_password || !user.reset_password.code) return res.status(400).send({ success: false });
+
+        const time = (Date.now() - user.reset_password.date) / 1000;
+        if (time > 600) return res.status(400).send({ success: false, message: "Code is no longer valid" });
+
+        if (user.reset_password.code != code) {
+            user.reset_password = undefined;
+            await user.save();
+            return res.status(400).send({ success: false, message: "Code isn't valid" });
+        }
+        user.reset_password = undefined;
+        if (!user.double_authentification) user.double_authentification.activated = false;
+        user.password = password;
+        await user.save();
+
+        return res.status(200).send({ success: true });
+    } catch (error) {
+        error.success = false;
+        res.status(400).send(error);
+    }
+})
+
+router.post('/change-password', Auth.AuthentificationUser, async(req, res) => {
+    // Change password
+    try {
+        const { email, oldPassword, newPassword } = req.body;
+        const user = req.user;
+        if (!email || !oldPassword || !newPassword) return res.status(400).send({ success: false, message: "Invalid body" });
+
+        const isPasswordMatch = await bcrypt.compare(oldPassword, user.password);
+        if (!isPasswordMatch) throw { success: false };
+        if (email !== user.email) throw { success: false };
+
+        user.password = newPassword;
+        await user.save();
+
+        return res.status(200).send({ success: true });
+    } catch (error) {
+        error.success = false;
+        res.status(400).send(error);
+    }
+})
+
+router.post('/avatar', Auth.AuthentificationUser, async(req, res) => {
+    try {
+        const user = req.user;
+        const form = new IncomingForm({ multiples: false, uploadDir: 'uploads/avatars' });
+        form.keepExtensions = true;
+        let avatar;
+        form
+            .on('file', (field, file) => {
+                if (file) avatar = file;
+            })
+            .on('end', async() => {
+                if (avatar) {
+                    if (user.avatar) fs.unlink(__basedir + __avatarPath + user.avatar, () => {});
+                    user.avatar = avatar.path.replace(/^.*[\\\/]/, '');
+                    await user.save();
+                    return res.status(200).sendFile(__basedir + __avatarPath + user.avatar);
+                } else return res.status(400).send({ success: false });
+            })
+        form.parse(req);
+    } catch (error) {
+        error.success = false;
+        res.status(400).send(error);
+    }
+})
+
+router.get('/avatar', Auth.AuthentificationUser, async(req, res) => {
+    try {
+        const user = req.user;
+        if (user.avatar) return res.status(200).sendFile(__basedir + __avatarPath + user.avatar);
+        return res.status(400).send({ success: false });
+    } catch (error) {
+        error.success = false;
+        res.status(400).send(error);
+    }
+})
+
+router.post('/disconnect', Auth.AuthentificationUser, async(req, res) => {
+    // Log user out of the application
+    try {
+        req.user.token = undefined;
+        req.user.refresh_token = undefined;
+
+        await req.user.save();
+        res.status(200).send({ success: true, message: 'Successfully logout' });
+    } catch (error) {
+        error.success = false;
+        res.status(500).send(error);
+    }
+})
+
+        
+router.delete('/', Auth.AuthentificationUser,  async(req, res) => {
+    // Log user out of the application
+    try {
+        const { id, email, password } = req.body;
+        if (!id || !email || !password) return res.status(400).send({ success: false, message: 'Invalid credentials' });
+
+        const user = await User.findByCredentials(email, password);
+        if (!user || id != user.id || email !== user.email) {
+            return res.status(400).send({ success: false, message: 'Invalid credentials' });
+        }
+
+        if (user.avatar) fs.unlink(__basedir + __avatarPath + user.avatar, () => {});
+        await User.deleteOne(user);
+
+        res.status(200).send({ success: true, message: 'Successfully deleted' });
+    } catch (error) {
+        error.success = false;
+        res.status(500).send(error);
+    }
+})
 
 module.exports = router;

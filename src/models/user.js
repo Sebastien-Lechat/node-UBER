@@ -19,7 +19,7 @@ const userSchema = mongoose.Schema({
         lowercase: true,
         validate: value => {
             if (!validator.isEmail(value)) throw { success: false, message: 'Invalid Email address' }
-            if (value.length > 100) throw { success: false, message: 'Your password must contains less than 100 characters' }
+            // if (value.length > 100) throw { success: false, message: 'Your password must contains less than 100 characters' }
         }
     },
     password: {
@@ -58,17 +58,6 @@ const userSchema = mongoose.Schema({
         }
     },
     verify_email: { // Also use when email is changed        
-        code: {
-            type: String
-        },
-        date: {
-            type: Number
-        },
-        verified: {
-            type: Boolean
-        }
-    },
-    verify_phone: { // Also use when phone is changed
         code: {
             type: String
         },
@@ -185,10 +174,7 @@ userSchema.methods.generateJSON = async function () {
 
 userSchema.methods.generateAccountJSON = async function () {
     const user = this;
-
     const ret = await user.generateJSON();
-
-    if (user.verify_phone && user.verify_phone.verified) ret.verify_phone = true;
     if (user.double_authentification && user.double_authentification.activated) ret.double_authentification = true;
     return ret;
 }

@@ -1,3 +1,6 @@
+const jwt = require('jsonwebtoken')
+const User = require('../models/User')
+
 const AuthentificationUser = async (req, res, next) => {
     try {
         const token = req.header('Authorization').replace('Bearer ', '');
@@ -13,3 +16,9 @@ const AuthentificationUser = async (req, res, next) => {
         res.status(401).send({ success: false, message: 'Not authorized to access this resource' });
     }
 }
+
+var Auth = {
+    AuthentificationUser: AuthentificationUser,
+};
+
+module.exports = Auth;

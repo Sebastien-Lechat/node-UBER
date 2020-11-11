@@ -22,8 +22,8 @@ const sendEmail = (destination, subject, name, code) => {
         if (error) {
             throw({success: false, message: 'Internal server error : EMAIL'})
         } else {
-            console.log('Email sent: ' + info.response);
-            console.log(mailOptions)
+            // console.log('Email sent: ' + info.response);
+            // console.log(mailOptions)
         }
     });
 }
