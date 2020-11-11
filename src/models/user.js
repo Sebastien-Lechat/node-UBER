@@ -19,7 +19,7 @@ const userSchema = mongoose.Schema({
         lowercase: true,
         validate: value => {
             if (!validator.isEmail(value)) throw { success: false, message: 'Invalid Email address' }
-            if (value.length > 100) throw { success: false, message: 'Your password must contains less than 100 characters' }
+            // if (value.length > 100) throw { success: false, message: 'Your password must contains less than 100 characters' }
         }
     },
     password: {
