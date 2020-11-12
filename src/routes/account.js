@@ -105,7 +105,6 @@ router.post('/request-verify-email', async(req, res) => {
 
         const user = await User.findOne({ email: email });
         if (!user) return res.status(400).send({ success: false });
-        console.log(1)
         const verify_email = await user.generateEmailVerifyCode();
         if (!verify_email) return res.status(400).send({ success: false });
 
