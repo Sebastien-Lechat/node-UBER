@@ -167,9 +167,11 @@ router.put('/', Auth.AuthentificationUser, async(req, res) => {
         const isPasswordMatch = await bcrypt.compare(password, user.password);
         if (!isPasswordMatch) return res.status(400).send({ success: false, message: 'Invalid credentials' });
 
-        if (email && email != user.email) user.verify_email = undefined;
-        if (phone && phone != user.phone) user.verify_phone = undefined;
-        if (!phone && user.phone) user.double_authentification = undefined;
+        if (email && email != user.email) {
+            user.verify_email = undefined;
+            user.double_authentification = undefined;
+        }
+        // if (phone && phone != user.phone) user.verify_phone = undefined;
 
         if (!email && !name && !phone && !picture) return res.status(400).send({ success: false, message: 'Invalid body' });
         if (email) user.email = email;
@@ -192,7 +194,6 @@ router.delete('/phone', Auth.AuthentificationUser, async(req, res) => {
     const user = req.user;
 
     user.phone = undefined;
-    user.verify_phone = undefined;
 
     await user.save();
 
@@ -231,7 +232,7 @@ router.post('/request-reset-password', async(req, res) => {
         const reset_password = await user.generateResetPasswordCode();
 
         if (type === 'email') {
-            sendEmail(user.email, 'no-reply', Messages.omculCodeMessage(user.name, reset_password.code))
+            sendEmail(user.email, 'no-reply', user.name, reset_password.code)
         }
 
         return res.status(200).send({ success: true });
