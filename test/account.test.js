@@ -101,6 +101,11 @@ describe('Account routes', () => {
 
         user1Info = res4.body;
 
+        done();
+    });
+
+
+    test("Reset Password", async done => {
         /** Reset Password */
         const respassword = await request(app)
             .post("/UBER-EEDSI/account/request-reset-password")
@@ -127,9 +132,11 @@ describe('Account routes', () => {
             .expect("Content-Type",/json/)
             .expect(200);
         expect(res5.body.success).toBe(true);
+    done();
+    });
 
+    test("Double Authentification", async done => {
         /** Double Authentification */
-        
         const allow = await request(app)
             .post("/UBER-EEDSI/account/double-authentification")
             .send({allow : true})
@@ -170,9 +177,20 @@ describe('Account routes', () => {
         expect(res6.body.createdAt).not.toBe(undefined);
         expect(res6.body.token).not.toBe(undefined);
         expect(res6.body.refresh_token).not.toBe(undefined);
+
+        user1Info = res6.body;
+
+        const allow2 = await request(app)
+            .post("/UBER-EEDSI/account/double-authentification")
+            .send({allow : false})
+            .set({ 'Authorization': user1Info.token })
+            .set('Accept','application/json')
+            .expect("Content-Type",/json/)
+            .expect(200);
+        expect(allow2.body.success).toBe(true);
+
         done();
     });
-
 
     test("Refresh Token", async done => {
         /** Refresh token */
