@@ -91,8 +91,78 @@ describe('Account routes', () => {
         expect(res4.body.token).not.toBe(undefined);
         expect(res4.body.refresh_token).not.toBe(undefined);
 
-        user1Info = res4;
+        user1Info = res4.body;
+
+        /** Reset Password */
+        const respassword = await request(app)
+            .post("/UBER-EEDSI/account/request-reset-password")
+            .send({ email: user1.email , type :'email' })
+            .set('Accept', 'application/json')
+            .expect("Content-Type", /json/)
+            .expect(200);
+        expect(respassword.body.success).toBe(true);
+
+        const rescode = await request(app)
+            .get("/getVerifiedCodeResetPassword")
+            .send({ email: user1.email })
+            .set('Accept', 'application/json')
+            .expect("Content-Type", /json/)
+            .expect(200);
+        expect(rescode.body.success).toBe(true);
+        expect(rescode.body.code).not.toBe(undefined);
+        const codepassword = rescode.body.code;
+
+        const res5 = await request(app)
+            .post("/UBER-EEDSI/account/reset-password")
+            .send({email: user1.email, code: codepassword ,password: user1.password})
+            .set('Accept','application/json')
+            .expect("Content-Type",/json/)
+            .expect(200);
+        expect(res5.body.success).toBe(true);
+
+        /** Double Authentification */
         
+        const allow = await request(app)
+            .post("/UBER-EEDSI/account/double-authentification")
+            .send({allow : true})
+            .set({ 'Authorization': user1Info.token })
+            .set('Accept','application/json')
+            .expect("Content-Type",/json/)
+            .expect(200);
+        expect(allow.body.success).toBe(true);
+
+        const reqDAuth = await request(app)
+            .post("/UBER-EEDSI/account/request-double-authentification")
+            .send({ email: user1.email , password: user1.password })
+            .set('Accept', 'application/json')
+            .expect("Content-Type", /json/)
+            .expect(200);
+        expect(reqDAuth.body.success).toBe(true);
+
+        const rescodeDoubleAuth = await request(app)
+            .get("/getVerifiedDoubleAuthentification")
+            .send({ email: user1.email })
+            .set('Accept', 'application/json')
+            .expect("Content-Type", /json/)
+            .expect(200);
+        expect(rescodeDoubleAuth.body.success).toBe(true);
+        expect(rescodeDoubleAuth.body.code).not.toBe(undefined);
+        const codeDoubleAuth = rescodeDoubleAuth.body.code;
+
+        const res6 = await request(app)
+            .post("/UBER-EEDSI/account/login")
+            .send({email: user1.email , password: user1.password , code : codeDoubleAuth})
+            .set('Accept', 'application/json')
+            .expect("Content-Type", /json/)
+            .expect(200);
+        expect(res6.body.id).not.toBe(undefined);
+        expect(res6.body.name).not.toBe(undefined);
+        expect(res6.body.email).not.toBe(undefined);
+        expect(res6.body.connexionDate).not.toBe(undefined);
+        expect(res6.body.createdAt).not.toBe(undefined);
+        expect(res6.body.token).not.toBe(undefined);
+        expect(res6.body.refresh_token).not.toBe(undefined);
+
         done();
     });
 });
