@@ -94,18 +94,32 @@ describe('Account routes', () => {
         expect(res4.body.refresh_token).not.toBe(undefined);
 
         user1Info = res4.body;
+        done();
+    });
 
+    test("OK - Edit User Profil", async done => {
         /** Edit User Profil */
-        // const res7 = await request(app)
-        //     .post("/UBER-EEDSI/account/editUserProfil")
-        //     .send({ email: user1.email, name: user1.name ,phone: user1.phone, password: user1.password })
-        //     .set({ 'Authorization': user1Info.token })
-        //     .set('Accept', 'application/json')
-        //     .expect("Content-Type", /json/)
-        //     .expect(200);
-        // expect(res7.body.success).toBe(true);
+        const res7 = await request(app)
+            .put("/UBER-EEDSI/account/")
+            .send({ email: user1.email,
+                    name: user1.name ,
+                    phone: user1.phone, 
+                    password: user1.password })
+            .set({ 'Authorization': user1Info.token })
+            .set('Accept', 'application/json')
+            .expect("Content-Type", /json/)
+            .expect(200);
+        expect(res7.body.success).toBe(true);
+        expect(res7.body.id).not.toBe(undefined);
+        expect(res7.body.name).not.toBe(undefined);
+        expect(res7.body.email).not.toBe(undefined);
+        expect(res7.body.connexionDate).not.toBe(undefined);
+        expect(res7.body.createdAt).not.toBe(undefined);
         
+        done();
+    });
 
+    test("OK - Change password", async done => {
         /** Change Password */
         const res8 = await request(app)
             .post("/UBER-EEDSI/account/change-password")

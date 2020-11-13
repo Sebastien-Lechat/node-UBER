@@ -155,7 +155,7 @@ router.get('/', Auth.AuthentificationUser, async(req, res) => {
     res.send(ret);
 })
 
-router.put('/editUserProfil ', Auth.AuthentificationUser, async(req, res) => {
+router.put('/', Auth.AuthentificationUser, async(req, res) => {
     // Edit user profile
     try {
         const user = req.user;
