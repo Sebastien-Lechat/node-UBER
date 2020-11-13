@@ -28,7 +28,9 @@ const uuidUser1 = uuidv4();
 const user1 = {
     name: 'Name_' + uuidUser1,
     email: uuidUser1 + "@gmail.com",
-    password: "1234567"
+    password: "1234567",
+    newPassword:"12345678",
+    phone:"0123456789"
 }
 
 const user1Credentials = {
@@ -91,7 +93,28 @@ describe('Account routes', () => {
         expect(res4.body.token).not.toBe(undefined);
         expect(res4.body.refresh_token).not.toBe(undefined);
 
-        user1Info = res4;
+        user1Info = res4.body;
+
+        /** Edit User Profil */
+        // const res7 = await request(app)
+        //     .post("/UBER-EEDSI/account/editUserProfil")
+        //     .send({ email: user1.email, name: user1.name ,phone: user1.phone, password: user1.password })
+        //     .set({ 'Authorization': user1Info.token })
+        //     .set('Accept', 'application/json')
+        //     .expect("Content-Type", /json/)
+        //     .expect(200);
+        // expect(res7.body.success).toBe(true);
+        
+
+        /** Change Password */
+        const res8 = await request(app)
+            .post("/UBER-EEDSI/account/change-password")
+            .send({ email: user1.email, oldPassword: user1.password, newPassword: user1.newPassword })
+            .set({ 'Authorization': user1Info.token })
+            .set('Accept', 'application/json')
+            .expect("Content-Type", /json/)
+            .expect(200);
+        expect(res8.body.success).toBe(true);
         
         done();
     });
