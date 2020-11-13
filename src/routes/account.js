@@ -80,7 +80,7 @@ router.post('/request-double-authentification', async(req, res) => {
 })
 
 router.post('/double-authentification', Auth.AuthentificationUser, async(req, res) => {
-    // Request code for double authentification
+    // Change if double auth is active ou not
     try {
         const { allow } = req.body;
         const user = req.user;
