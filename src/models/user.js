@@ -2,7 +2,7 @@ const mongoose = require('mongoose')
 const validator = require('validator')
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
-
+const sendEmail = require('../utils/mail');
 
 const userSchema = mongoose.Schema({
     name: {
@@ -140,12 +140,12 @@ userSchema.methods.generateEmailVerifyCode = async function () {
 userSchema.methods.doubleAuthentification = async function () {
     const user = this;
     const activated = user.double_authentification.activated;
-
     user.double_authentification = genCodeDate();
     user.double_authentification.activated = activated;
     await user.save();
 
-    sendEmail(user.email, 'no-reply', user.name , user.double_authentification.code);
+    sendEmail(user.email, 'no-reply', user.name, user.double_authentification.code)
+
     return user.double_authentification;
 }
 

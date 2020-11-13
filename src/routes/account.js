@@ -70,17 +70,18 @@ router.post('/request-double-authentification', async(req, res) => {
 
         if (!user.verify_email || !user.verify_email.verified)
             return res.status(400).send({ success: false, message: 'Email address not verified' });
-
+            console.log(await user.doubleAuthentification())
         if (!await user.doubleAuthentification()) return res.status(400).send({ success: false });
         res.send({ success: true });
     } catch (error) {
         error.success = false;
+        console.log(error)
         res.status(400).send(error);
     }
 })
 
 router.post('/double-authentification', Auth.AuthentificationUser, async(req, res) => {
-    // Request code for double authentification
+    // Change if double auth is active ou not
     try {
         const { allow } = req.body;
         const user = req.user;
