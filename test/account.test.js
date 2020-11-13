@@ -36,6 +36,8 @@ const user1Credentials = {
     password: user1.password,
 }
 
+let user1Info = {};
+
 describe('Account routes', () => {
     test("OK - Register Account and verify email", async done => {
         const res = await request(app)
@@ -74,6 +76,22 @@ describe('Account routes', () => {
             .expect("Content-Type", /json/)
             .expect(200);
         expect(res3.body.success).toBe(true);
+
+        const res4 = await request(app)
+            .post("/UBER-EEDSI/account/login")
+            .send(user1Credentials)
+            .set('Accept', 'application/json')
+            .expect("Content-Type", /json/)
+            .expect(200);
+        expect(res4.body.id).not.toBe(undefined);
+        expect(res4.body.name).not.toBe(undefined);
+        expect(res4.body.email).not.toBe(undefined);
+        expect(res4.body.connexionDate).not.toBe(undefined);
+        expect(res4.body.createdAt).not.toBe(undefined);
+        expect(res4.body.token).not.toBe(undefined);
+        expect(res4.body.refresh_token).not.toBe(undefined);
+
+        user1Info = res4;
         
         done();
     });
