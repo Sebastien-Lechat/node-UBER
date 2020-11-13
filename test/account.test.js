@@ -40,7 +40,7 @@ const user1Credentials = {
 
 let user1Info = {};
 
-describe('Account routes', () => {
+describe('OK - Routes Account', () => {
     test("OK - Register Account and verify email", async done => {
 
         /** Register */
@@ -296,3 +296,30 @@ describe('Account routes', () => {
         done();
     });
 });
+
+describe('KO - Routes Account', () => {
+    test("KO - Login", async done => {
+        const res1 = await request(app)
+            .post("/UBER-EEDSI/account/login")
+            .send({})
+            .set('Accept', 'application/json')
+            .expect("Content-Type", /json/)
+            .expect(400);
+        expect(res1.body.success).toBe(false);
+        expect(res1.body.message).toBe('Missing email');
+
+        const res2 = await request(app)
+            .post("/UBER-EEDSI/account/login")
+            .send({email: user1.email})
+            .set('Accept', 'application/json')
+            .expect("Content-Type", /json/)
+            .expect(400);
+        expect(res2.body.success).toBe(false);
+        expect(res2.body.message).toBe('Missing password');
+        // expect(res2.body.success).toBe(false);
+        // expect(res2.body.error).not.toBe(undefined);
+
+        done();
+    });
+});
+

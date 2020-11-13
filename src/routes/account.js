@@ -70,12 +70,10 @@ router.post('/request-double-authentification', async(req, res) => {
 
         if (!user.verify_email || !user.verify_email.verified)
             return res.status(400).send({ success: false, message: 'Email address not verified' });
-            console.log(await user.doubleAuthentification())
         if (!await user.doubleAuthentification()) return res.status(400).send({ success: false });
         res.send({ success: true });
     } catch (error) {
         error.success = false;
-        console.log(error)
         res.status(400).send(error);
     }
 })
@@ -112,7 +110,6 @@ router.post('/request-verify-email', async(req, res) => {
         sendEmail(user.email, 'no-reply', user.name, verify_email.code);
         res.send({ success: true });
     } catch (error) {
-        console.log(error)
         error.success = false;
         res.status(400).send(error);
     }
