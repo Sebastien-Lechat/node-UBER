@@ -1,6 +1,6 @@
 const routes = require('express').Router(), 
 accountRouter = require('./account')
 
-routes.use('/UBER-EEDSI/account', accountRouter);
+routes.use('/api/UBER-EEDSI/account', accountRouter);
 
 module.exports = routes;
