@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const historicSchema = mongoose.Schema({
+const historySchema = mongoose.Schema({
     user_id : {
         type: String,
         required: [true, "User ID required"]
@@ -17,17 +17,18 @@ const historicSchema = mongoose.Schema({
         type : String
     },
     date: {
-        type: Number
+        type: Date,
+        default: Date.now()
     },
     moving_means : {
         type: String
     },
     map : {
-        type: String 
+        type: String, 
+        required : [true, "Map required"]
     }
-
 })
 
-const Historic = mongoose.model('historic', historicSchema);
+const History = mongoose.model('history', historySchema);
 
-module.exports = Historic;
+module.exports = History;
