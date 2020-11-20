@@ -37,8 +37,21 @@ router.delete('/', async(req, res) => {
     }
 })
 
-// route de récupération (par utilisateur) des courses 
+// route de récupération (par utilisateur) des courses (historique d'une seul utilisateur)
 
+router.get('/',  async(req, res) => {
+    try{
+        const user= req.user;
 
+        const userHistoric =await History.find({ _id: req.body.user_id});
+        
+        const ret = {succes : true};
+        ret.Histories = userHistoric;
+        res.send(ret);
+    }
+    catch(error){
+        return res.status(400).send({success:false,message:error});
+    }
+})
 
 module.exports = router;
