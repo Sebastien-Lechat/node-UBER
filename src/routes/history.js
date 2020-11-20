@@ -22,7 +22,20 @@ router.post('/', async(req, res) => {
 })
 
 // route de suppression
-
+router.delete('/', async(req, res) => {
+    try{
+        await User.findOne({ _id: req.body.user_id });
+        const history = new History(req.body);
+        await History.deleteOne(history);
+        res.status(201).send({
+            success: true,
+        });
+    }
+    catch(error){
+        if(error.path === "_id") return res.status(400).send({success:false,message:"Invalid user ID"});
+        return res.status(400).send({success:false,message:error});
+    }
+})
 
 // route de récupération (par utilisateur) des courses 
 
