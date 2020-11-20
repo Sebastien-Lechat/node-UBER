@@ -57,8 +57,8 @@ router.get('/', Auth.AuthentificationUser,  async(req, res) => {
     try{
         const user= req.user;
 
-        const userHistoric =await History.find({ user_id: req.body.user_id});
-    
+        const userHistoric =await History.find({ user_id: user._id});
+
         const ret = {succes : true};
         ret.Histories = userHistoric;
         res.send(ret);
