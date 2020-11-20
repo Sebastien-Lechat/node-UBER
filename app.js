@@ -1,6 +1,7 @@
 require('dotenv').config()
-const express = require('express');
+const rateLimit = require("express-rate-limit");
 const route = require('./src/routes/index');
+const express = require('express');
 const port = process.env.PORT;
 var cors = require('cors');
 require('./src/db/db');
@@ -16,6 +17,13 @@ app.use((error, request, response, next) => {
     }
     return next();
 });
+
+const limiter = rateLimit({
+    windowMs: 1 * 60 * 1000, // 1 minutes
+    max: 100 // limit each IP to 100 requests per windowMs
+});
+
+app.use(limiter);
 
 app.use(route);
 
