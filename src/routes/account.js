@@ -105,7 +105,7 @@ router.post('/request-verify-email', async(req, res) => {
         const user = await User.findOne({ email: email });
         if (!user) return res.status(400).send({ success: false });
         const verify_email = await user.generateEmailVerifyCode();
-        if (!verify_email) return res.status(400).send({ success: false });
+        if (!verify_email) return res.status(500).send({ success: false, message: "Can't generate verify email code" });
 
         sendEmail(user.email, 'no-reply', user.name, verify_email.code);
         res.send({ success: true });
@@ -124,12 +124,12 @@ router.post('/verify-email', async(req, res) => {
         const user = await User.findOne({ email: email });
         if (!user) return res.status(400).send({ success: false });
 
-        if (!user.verify_email || !user.verify_email.code || user.verify_email.verified) return res.status(400).send({ success: false });
+        if (!user.verify_email || !user.verify_email.code || user.verify_email.verified) return res.status(400).send({ success: false, message: "This email is already verified" });
 
         const time = (Date.now() - user.verify_email.date) / 1000;
         if (time > 600) return res.status(400).send({ success: false, message: "Code is no longer valid" });
 
-        if (user.verify_email.code !== code) return res.status(400).send({ success: false });
+        if (user.verify_email.code !== code) return res.status(400).send({ success: false, message : "Wrong code" });
 
         user.verify_email.verified = true;
         user.verify_email.code = undefined;
@@ -183,7 +183,7 @@ router.put('/', Auth.AuthentificationUser, async(req, res) => {
 
         res.send(ret);
     } catch (error) {
-        res.status(400).send({ success: false });
+        res.status(400).send({ success: false, message : error });
     }
 })
 
@@ -227,7 +227,7 @@ router.post('/request-reset-password', async(req, res) => {
         const user = await User.findOne({ email });
         if (!user) return res.status(400).send({ success: false });
         const reset_password = await user.generateResetPasswordCode();
-
+        if (!reset_password) return res.status(500).send({ success: false, message: "Can't generate password code" });
         if (type === 'email') {
             sendEmail(user.email, 'no-reply', user.name, reset_password.code)
         }
@@ -276,7 +276,7 @@ router.post('/change-password', Auth.AuthentificationUser, async(req, res) => {
         if (!email || !oldPassword || !newPassword) return res.status(400).send({ success: false, message: "Invalid body" });
 
         const isPasswordMatch = await bcrypt.compare(oldPassword, user.password);
-        if (!isPasswordMatch) throw { success: false };
+        if (!isPasswordMatch) throw { success: false, message: "Old password is wrong" };
         if (email !== user.email) throw { success: false };
 
         user.password = newPassword;
@@ -318,7 +318,7 @@ router.get('/avatar', Auth.AuthentificationUser, async(req, res) => {
     try {
         const user = req.user;
         if (user.avatar) return res.status(200).sendFile(__basedir + __avatarPath + user.avatar);
-        return res.status(400).send({ success: false });
+        return res.status(400).send({ success: true });
     } catch (error) {
         error.success = false;
         res.status(400).send(error);
