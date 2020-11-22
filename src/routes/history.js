@@ -5,10 +5,12 @@ const History = require('../models/History');
 const User = require('../models/User');
 
 
-router.post('/', async(req, res) => {
+router.post('/', Auth.AuthentificationUser, async(req, res) => {
     // Adding a new history
     try{
-        await User.findOne({ _id: req.body.user_id });
+        const user = req.user._id;
+        await User.findOne({ _id: user._id });
+        req.body.user_id = user._id
         const history = new History(req.body);
         await history.save();
         res.status(201).send({
@@ -22,29 +24,42 @@ router.post('/', async(req, res) => {
 })
 
 // route de suppression
-router.delete('/', async(req, res) => {
+router.delete('/', Auth.AuthentificationUser, async(req, res) => {
     try{
-        await User.findOne({ _id: req.body.user_id });
-        const history = new History(req.body);
-        await History.deleteOne(history);
-        res.status(201).send({
+        const user_id = req.user._id;
+        const { id } = req.body; // récupération des valeurs dans req.body
+
+        if(!user_id) return res.status(400).send({success:false,message:"User ID is missing"}); // Vérification de si user_id existe
+
+        if(!id) return res.status(400).send({success:false,message:"History ID is missing"}); // Vérification de si id existe
+
+        await User.findOne({ _id: user_id }); // Regarde si l'utilisateur existe "pas obligatoire"
+        
+        const toDeleteHistory = await History.findOne({ _id: id, user_id: user_id }); // Regarde si l'historique existe et si il existe, le stocker dans une variable
+
+        if (!toDeleteHistory) return res.status(400).send({success:false,message:"Nothing to delete with this ID"});
+
+        await History.deleteOne(toDeleteHistory); // Supprime l'historique
+
+        res.status(201).send({ // Ca c'est bien paaasé
             success: true,
         });
     }
     catch(error){
-        if(error.path === "_id") return res.status(400).send({success:false,message:"Invalid user ID"});
-        return res.status(400).send({success:false,message:error});
+        console.log(error);
+        if(error.path === "_id") return res.status(400).send({success:false,message:"Invalid user or history ID"});
+        return res.status(400).send({success:false,message:error}); // Il y a une erreur
     }
 })
 
 // route de récupération (par utilisateur) des courses (historique d'une seul utilisateur)
 
-router.get('/', async(req, res) => {
+router.get('/', Auth.AuthentificationUser,  async(req, res) => {
     try{
         const user= req.user;
 
-        const userHistoric = await History.find({ user_id: req.body.user_id});
-        
+        const userHistoric =await History.find({ user_id: user._id});
+
         const ret = {succes : true};
         ret.Histories = userHistoric;
         res.send(ret);
