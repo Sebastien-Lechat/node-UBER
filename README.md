@@ -35,3 +35,9 @@ UBER-EEDSI API used by Website.
 ---
 
 ---
+
+## History
+
+- [Create history](doc/history/create.md) : `POST /history`
+- [Get all history](doc/history/data.md) : `GET /history`
+- [Delete history](doc/history/delete.md) : `DELETE /history`
