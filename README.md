@@ -24,11 +24,6 @@ UBER-EEDSI API used by Website.
 
 ---
 
-- [Request Verify Phone](doc/account/request-verify-phone.md) : `POST /account/request-verify-phone`
-- [Verify Phone](doc/account/verify-phone.md) : `POST /account/verify-phone`
-
----
-
 - [Request code to reset password](doc/account/request-reset-password.md) : `POST /account/request-reset-password`
 - [Reset password with code](doc/account/reset-password.md) : `POST /account/reset-password`
 
