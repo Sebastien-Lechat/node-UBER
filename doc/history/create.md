@@ -34,7 +34,7 @@ Used to create a new history
 
 ## Success Response
 
-**Code** : `200`
+**Code** : `201`
 
 ```json
 {
