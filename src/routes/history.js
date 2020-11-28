@@ -10,16 +10,24 @@ router.post('/', Auth.AuthentificationUser, async(req, res) => {
     try{
         const user = req.user._id;
         await User.findOne({ _id: user._id });
-        req.body.user_id = user._id
+        
+        req.body.user_id = user._id;
+
         const history = new History(req.body);
         await history.save();
+
+        history.user_id = undefined;
+        history.__v = undefined;
+
         res.status(201).send({
             success: true,
+            history : history,
         });
     }
     catch(error){
-        if(error.path === "_id") return res.status(400).send({success:false,message:"Invalid user ID"});
-        return res.status(400).send({success:false,message:error});
+        console.log(error);
+        if(error.path === "_id") return res.status(400).send({success:false, message:"Invalid user ID"});
+        return res.status(400).send({success: false,message: error});
     }
 })
 
@@ -41,7 +49,7 @@ router.delete('/', Auth.AuthentificationUser, async(req, res) => {
 
         await History.deleteOne(toDeleteHistory); // Supprime l'historique
 
-        res.status(201).send({ // Ca c'est bien paaasé
+        res.status(200).send({ // Ca c'est bien paaasé
             success: true,
         });
     }
@@ -59,9 +67,15 @@ router.get('/', Auth.AuthentificationUser,  async(req, res) => {
         const user= req.user;
 
         const userHistoric =await History.find({ user_id: user._id});
+        
+        userHistoric.map((item) => {
+            item.user_id = undefined;
+            item.__v = undefined;
+            return item;
+        })
 
-        const ret = {succes : true};
-        ret.Histories = userHistoric;
+        const ret = {success : true};
+        ret.histories = userHistoric;
         res.send(ret);
     }
     catch(error){
