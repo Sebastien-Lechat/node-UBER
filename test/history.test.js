@@ -33,7 +33,7 @@ const user1 = {
     phone:"0123456789"
 }
 
-const history1 = {
+let history1 = {
     departure_location : 'Paris',
     arrival_location : 'Boulogne',
     map : 'url123'
@@ -46,13 +46,14 @@ const user1Credentials = {
 
 let user1Info = {};
 
-describe('OK - Routes Account', () => {
+describe('OK - Routes History', () => {
+    
     test("OK - Register Account and verify email", async done => {
 
         /** Register */
 
         const res = await request(app)
-        .post("api/UBER-EEDSI/account/register")
+        .post("/api/UBER-EEDSI/account/register")
         .send(user1)
         .set('Accept', 'application/json')
         .expect("Content-Type", /json/)
@@ -65,7 +66,7 @@ describe('OK - Routes Account', () => {
         /** Verify Email */
 
         const res1 = await request(app) /** Lance l'email avec le code */
-            .post("api/UBER-EEDSI/account/request-verify-email")
+            .post("/api/UBER-EEDSI/account/request-verify-email")
             .send({ email: user1.email })
             .set('Accept', 'application/json')
             .expect("Content-Type", /json/)
@@ -83,7 +84,7 @@ describe('OK - Routes Account', () => {
         const code = res2.body.code;
 
         const res3 = await request(app) /** Vérification de l'email avec le code */
-            .post("api/UBER-EEDSI/account/verify-email")
+            .post("/api/UBER-EEDSI/account/verify-email")
             .send({ email: user1.email, code: code })
             .set('Accept', 'application/json')
             .expect("Content-Type", /json/)
@@ -93,7 +94,7 @@ describe('OK - Routes Account', () => {
         /** Login */
 
         const res4 = await request(app)
-            .post("api/UBER-EEDSI/account/login")
+            .post("/api/UBER-EEDSI/account/login")
             .send(user1Credentials)
             .set('Accept', 'application/json')
             .expect("Content-Type", /json/)
@@ -111,33 +112,157 @@ describe('OK - Routes Account', () => {
 
         done();
     });
-    describe('OK - Routes History', () => {
-        test("OK - Create , Delete and Recovery", async done => {
-            // CREATE //
-            const res = await request(app)
-                .post("api/UBER-EEDSI/history/")
-                .send({id : user1Info.id, departure_location : history1.departure_location,
-                arrival_location: history1.arrival_location, map : history1.map})
-                .set('Accept', 'application/json')
-                .expect("Content-Type", /json/)
-                .expect(201);
-            expect(res.body.id).not.toBe(undefined);
-            // DELETE //
-            const res1 = await request(app)
-                .delete("api/UBER-EEDSI/history/")
-                .send({id : user1Info.id})
-                .set('Accept', 'application/json')
-                .expect("Content-Type", /json/)
-                .expect(201);
-            expect(res1.body.id).not.toBe(undefined);
-            // RECOVERY//
-            const res3 = await request(app)
-                .get("api/UBER-EEDSI/history/")
-                .send({})
-                .set('Accept','application/json')
-                .expect("Content-Type",/json/)
-                .expect(true);
-            expect(res3.body.id).not.toBe(undefined);
-        });
+
+    test("OK - Create History", async done => {
+        // CREATE //
+        const res = await request(app)
+            .post("/api/UBER-EEDSI/history/")
+            .send({
+                departure_location : history1.departure_location,
+                arrival_location: history1.arrival_location, 
+                map : history1.map
+            })
+            .set('Accept', 'application/json')
+            .set({ 'Authorization': user1Info.token })
+            .expect("Content-Type", /json/)
+            .expect(201);
+        expect(res.body.success).toBe(true);
+        expect(res.body.history).not.toBe(undefined);
+
+        history1 = res.body.history;
+        done();
+    });
+    
+    test("OK - Get History", async done => {
+        // GET //
+        const res2 = await request(app)
+            .get("/api/UBER-EEDSI/history/")
+            .send({})
+            .set({ 'Authorization': user1Info.token })
+            .set('Accept','application/json')
+            .expect("Content-Type",/json/)
+            .expect(200);
+        expect(res2.body.success).toBe(true);
+        expect(res2.body.histories).not.toBe(undefined);
+        done();
+    });
+
+
+    test("OK - Delete History", async done => {
+        // DELETE //
+        const res1 = await request(app)
+            .delete("/api/UBER-EEDSI/history/")
+            .send({id : history1._id})
+            .set({ 'Authorization': user1Info.token })
+            .set('Accept', 'application/json')
+            .expect("Content-Type", /json/)
+            .expect(200);
+        expect(res1.body.success).toBe(true);
+        done();
+    });
+});
+
+describe('KO - Routes History', () => {
+
+    test("KO - Create History missing data", async done => {
+        const res = await request(app)
+            .post("/api/UBER-EEDSI/history/")
+            .send({
+                arrival_location: history1.arrival_location, 
+                map : history1.map
+            })
+            .set('Accept', 'application/json')
+            .set({ 'Authorization': user1Info.token })
+            .expect("Content-Type", /json/)
+            .expect(400);
+        expect(res.body.success).toBe(false);
+        expect(res.body.message).not.toBe(undefined);
+        done();
+    });
+    
+    test("KO - Create History no token", async done => {
+        const res = await request(app)
+            .post("/api/UBER-EEDSI/history/")
+            .send({
+                departure_location : history1.departure_location,
+                arrival_location: history1.arrival_location, 
+                map : history1.map
+            })
+            .set('Accept', 'application/json')
+            .expect("Content-Type", /json/)
+            .expect(401);
+        expect(res.body.success).toBe(false);
+        expect(res.body.message).toBe("Not authorized to access this resource");
+        done();
+    });
+
+    test("KO - Get History no token", async done => {
+        const res = await request(app)
+            .get("/api/UBER-EEDSI/history/")
+            .set('Accept', 'application/json')
+            .expect("Content-Type", /json/)
+            .expect(401);
+        expect(res.body.success).toBe(false);
+        expect(res.body.message).toBe("Not authorized to access this resource");
+        done();
+    });
+
+    test("KO - Delete History missing id", async done => {
+        const res = await request(app)
+            .delete("/api/UBER-EEDSI/history/")
+            .send({})
+            .set('Accept', 'application/json')
+            .set({ 'Authorization': user1Info.token })
+            .expect("Content-Type", /json/)
+            .expect(400);
+        expect(res.body.success).toBe(false);
+        expect(res.body.message).toBe("History ID is missing");
+        done();
+    });
+
+    test("KO - Delete History no token", async done => {
+        const res = await request(app)
+            .delete("/api/UBER-EEDSI/history/")
+            .send({id: history1._id})
+            .set('Accept', 'application/json')
+            .expect("Content-Type", /json/)
+            .expect(401);
+        expect(res.body.success).toBe(false);
+        expect(res.body.message).toBe("Not authorized to access this resource");
+        done();
+    });
+});
+
+describe('OK - Delete account after test', () => {
+
+    test("OK - Delete Account", async done => {
+        /** Login for Delete*/
+        const res4 = await request(app)
+            .post("/api/UBER-EEDSI/account/login")
+            .send({email: user1.email, password : user1.password})
+            .set('Accept', 'application/json')
+            .expect("Content-Type", /json/)
+            .expect(200);
+        expect(res4.body.success).toBe(true);
+        expect(res4.body.id).not.toBe(undefined);
+        expect(res4.body.name).not.toBe(undefined);
+        expect(res4.body.email).not.toBe(undefined);
+        expect(res4.body.connexionDate).not.toBe(undefined);
+        expect(res4.body.createdAt).not.toBe(undefined);
+        expect(res4.body.token).not.toBe(undefined);
+        expect(res4.body.refresh_token).not.toBe(undefined);
+        user1Info = res4.body;
+
+        /** Delete Account*/
+        const res13 = await request(app)
+        .delete("/api/UBER-EEDSI/account/")
+        .send({id : user1Info.id, email: user1.email, password : user1.password})
+        .set({ 'Authorization': res4.body.token })
+        .set('Accept', 'application/json')
+        .expect("Content-Type", /json/)
+        .expect(200);
+        expect(res13.body.success).toBe(true);
+        expect(res13.body.message).toBe('Successfully deleted');
+        done();
     });
 });
