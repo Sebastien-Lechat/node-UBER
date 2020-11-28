@@ -26,7 +26,7 @@ Used to get history of a user
 
 ## Success Response
 
-**Code** : `200`
+**Code** : `201`
 
 ```json
 {
@@ -44,7 +44,7 @@ Used to get history of a user
 
 **Condition** : If we have and error returned by the database
 
-**Code** : `400`
+**Code** : `BAD REQUEST`
 
 ```json
 {
