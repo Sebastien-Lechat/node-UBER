@@ -118,7 +118,6 @@ describe('OK - Routes History', () => {
         const res = await request(app)
             .post("/api/UBER-EEDSI/history/")
             .send({
-                id : user1Info._id, 
                 departure_location : history1.departure_location,
                 arrival_location: history1.arrival_location, 
                 map : history1.map
@@ -161,6 +160,80 @@ describe('OK - Routes History', () => {
         expect(res1.body.success).toBe(true);
         done();
     });
+});
+
+describe('KO - Routes History', () => {
+
+    test("KO - Create History missing data", async done => {
+        const res = await request(app)
+            .post("/api/UBER-EEDSI/history/")
+            .send({
+                arrival_location: history1.arrival_location, 
+                map : history1.map
+            })
+            .set('Accept', 'application/json')
+            .set({ 'Authorization': user1Info.token })
+            .expect("Content-Type", /json/)
+            .expect(400);
+        expect(res.body.success).toBe(false);
+        expect(res.body.message).not.toBe(undefined);
+        done();
+    });
+    
+    test("KO - Create History no token", async done => {
+        const res = await request(app)
+            .post("/api/UBER-EEDSI/history/")
+            .send({
+                departure_location : history1.departure_location,
+                arrival_location: history1.arrival_location, 
+                map : history1.map
+            })
+            .set('Accept', 'application/json')
+            .expect("Content-Type", /json/)
+            .expect(401);
+        expect(res.body.success).toBe(false);
+        expect(res.body.message).toBe("Not authorized to access this resource");
+        done();
+    });
+
+    test("KO - Get History no token", async done => {
+        const res = await request(app)
+            .get("/api/UBER-EEDSI/history/")
+            .set('Accept', 'application/json')
+            .expect("Content-Type", /json/)
+            .expect(401);
+        expect(res.body.success).toBe(false);
+        expect(res.body.message).toBe("Not authorized to access this resource");
+        done();
+    });
+
+    test("KO - Delete History missing id", async done => {
+        const res = await request(app)
+            .delete("/api/UBER-EEDSI/history/")
+            .send({})
+            .set('Accept', 'application/json')
+            .set({ 'Authorization': user1Info.token })
+            .expect("Content-Type", /json/)
+            .expect(400);
+        expect(res.body.success).toBe(false);
+        expect(res.body.message).toBe("History ID is missing");
+        done();
+    });
+
+    test("KO - Delete History no token", async done => {
+        const res = await request(app)
+            .delete("/api/UBER-EEDSI/history/")
+            .send({id: history1._id})
+            .set('Accept', 'application/json')
+            .expect("Content-Type", /json/)
+            .expect(401);
+        expect(res.body.success).toBe(false);
+        expect(res.body.message).toBe("Not authorized to access this resource");
+        done();
+    });
+});
+
+describe('OK - Delete account after test', () => {
 
     test("OK - Delete Account", async done => {
         /** Login for Delete*/
