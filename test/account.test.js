@@ -265,36 +265,7 @@ describe('OK - Routes Account', () => {
         done();
     });
 
-    test("OK - Delete Account", async done => {
-        /** Login for Delete*/
-        const res4 = await request(app)
-            .post("/api/UBER-EEDSI/account/login")
-            .send({email: user1.email, password : user1.newPassword})
-            .set('Accept', 'application/json')
-            .expect("Content-Type", /json/)
-            .expect(200);
-        expect(res4.body.success).toBe(true);
-        expect(res4.body.id).not.toBe(undefined);
-        expect(res4.body.name).not.toBe(undefined);
-        expect(res4.body.email).not.toBe(undefined);
-        expect(res4.body.connexionDate).not.toBe(undefined);
-        expect(res4.body.createdAt).not.toBe(undefined);
-        expect(res4.body.token).not.toBe(undefined);
-        expect(res4.body.refresh_token).not.toBe(undefined);
-        user1Info = res4.body;
-
-        /** Delete Account*/
-        const res13 = await request(app)
-        .delete("/api/UBER-EEDSI/account/")
-        .send({id : user1Info.id, email: user1.email, password : user1.newPassword})
-        .set({ 'Authorization': res4.body.token })
-        .set('Accept', 'application/json')
-        .expect("Content-Type", /json/)
-        .expect(200);
-        expect(res13.body.success).toBe(true);
-        expect(res13.body.message).toBe('Successfully deleted');
-        done();
-    });
+    
 });
 
 describe('KO - Routes Account', () => {
@@ -307,33 +278,20 @@ describe('KO - Routes Account', () => {
             .expect("Content-Type", /json/)
             .expect(400);
         expect(res10.body.success).toBe(false);
-        expect(res10.body.id).toBe(undefined);
-        expect(res10.body.name).toBe(undefined);
-        expect(res10.body.email).toBe(undefined);
+        expect(res10.body.message).not.toBe(undefined);
         done();
     });
 
      /** Verify Email */
     test("KO - Verify Email", async done => {
-
         const res11 = await request(app)
             .post("/api/UBER-EEDSI/account/request-verify-email")
-            .send({ email: user1.email })
+            .send({})
             .set('Accept', 'application/json')
             .expect("Content-Type", /json/)
             .expect(400);
         expect(res11.body.success).toBe(false);
- 
-
-        const res12 = await request(app) 
-            .get("/getVerifiedCode")
-            .send({  })
-            .set('Accept', 'application/json')
-            .expect("Content-Type", /json/)
-            .expect(400);
-        expect(res12.body.success).toBe(false);
-        expect(res12.body.code).toBe(undefined);
-        const code = res12.body.code;
+        expect(res11.body.message).toBe('Invalid body');
 
         const res13 = await request(app) 
             .post("/api/UBER-EEDSI/account/verify-email")
@@ -346,22 +304,12 @@ describe('KO - Routes Account', () => {
 
         const res14 = await request(app) 
             .post("/api/UBER-EEDSI/account/verify-email")
-            .send({ code: code })
+            .send({ code: '111111' })
             .set('Accept', 'application/json')
             .expect("Content-Type", /json/)
             .expect(400);
         expect(res14.body.success).toBe(false);
         expect(res14.body.message).toBe('Invalid body');
-
-        const time = 610;
-        const res15 = await request(app) 
-            .post("/api/UBER-EEDSI/account/verify-email")
-            .send({ time: time })
-            .set('Accept', 'application/json')
-            .expect("Content-Type", /json/)
-            .expect(400);
-        expect(res15.body.success).toBe(false);
-        expect(res15.body.message).toBe("Invalid body");
 
     done();
     });
@@ -375,13 +323,6 @@ describe('KO - Routes Account', () => {
             .expect("Content-Type", /json/)
             .expect(400);  
         expect(res1.body.success).toBe(false);
-        expect(res1.body.id).toBe(undefined);
-        expect(res1.body.name).toBe(undefined);
-        expect(res1.body.email).toBe(undefined);
-        expect(res1.body.connexionDate).toBe(undefined);
-        expect(res1.body.createdAt).toBe(undefined);
-        expect(res1.body.token).toBe(undefined);
-        expect(res1.body.refresh_token).toBe(undefined);
         expect(res1.body.message).toBe('Missing email');
 
         const res2 = await request(app)
@@ -462,18 +403,11 @@ describe('KO - Routes Account', () => {
             .expect("Content-Type", /json/)
             .expect(400);
         expect(res18.body.success).toBe(false);
-        expect(res18.body.code).toBe(undefined);
-        expect(res18.body.id).toBe(undefined);
-        expect(res18.body.name).toBe(undefined);
-        expect(res18.body.email).toBe(undefined);
-        expect(res18.body.connexionDate).toBe(undefined);
-        expect(res18.body.createdAt).toBe(undefined);
-        expect(res18.body.token).toBe(undefined);
-        expect(res18.body.refresh_token).toBe(undefined);
         expect(res18.body.message).toBe('Missing email');
         
         done();
     });
+
     /** Refresh Token */
     test("KO - Refresh Token", async done => {
         const res19 = await request(app)
@@ -483,14 +417,7 @@ describe('KO - Routes Account', () => {
             .expect("Content-Type", /json/)
             .expect(400);
         expect(res19.body.success).toBe(false);
-        expect(res19.body.id).toBe(undefined);
-        expect(res19.body.name).toBe(undefined);
-        expect(res19.body.email).toBe(undefined);
-        expect(res19.body.connexionDate).toBe(undefined);
-        expect(res19.body.createdAt).toBe(undefined);
-        expect(res19.body.token).toBe(undefined);
-        expect(res19.body.refresh_token).toBe(undefined);
-        expect(res19.body.message).toBe('Invalid id');
+        expect(res19.body.message).toBe('Invalid body');
         
         const res21 = await request(app)
             .post("/api/UBER-EEDSI/account/refresh-token")
@@ -499,13 +426,8 @@ describe('KO - Routes Account', () => {
             .expect("Content-Type", /json/)
             .expect(400);
         expect(res21.body.success).toBe(false);
-        expect(res21.body.id).toBe(undefined);
-        expect(res21.body.name).toBe(undefined);
-        expect(res21.body.email).toBe(undefined);
-        expect(res21.body.connexionDate).toBe(undefined);
-        expect(res21.body.createdAt).toBe(undefined);
-        expect(res21.body.token).toBe(undefined);
-        expect(res21.body.refresh_token).toBe(undefined);
+        expect(res21.body.message).toBe('Invalid body');
+
 
         const res22 = await request(app)
             .post("/api/UBER-EEDSI/account/refresh-token")
@@ -514,32 +436,47 @@ describe('KO - Routes Account', () => {
             .expect("Content-Type", /json/)
             .expect(400);
         expect(res22.body.success).toBe(false);
-        expect(res22.body.id).toBe(undefined);
-        expect(res22.body.name).toBe(undefined);
-        expect(res22.body.email).toBe(undefined);
-        expect(res22.body.connexionDate).toBe(undefined);
-        expect(res22.body.createdAt).toBe(undefined);
-        expect(res22.body.token).toBe(undefined);
-        expect(res22.body.refresh_token).toBe(undefined);
+        expect(res22.body.message).toBe('Invalid body');
 
+        const res23 = await request(app)
+            .post("/api/UBER-EEDSI/account/refresh-token")
+            .send({id : 'qdqdqdqzdqzdqzdqzdqz', refresh_token : user1Info.refresh_token })
+            .set('Accept', 'application/json')
+            .expect("Content-Type", /json/)
+            .expect(400);
+        expect(res23.body.success).toBe(false);
+        expect(res23.body.message).not.toBe(undefined);
+        
         done();
     });
    /** Edit User Profil */
-//    test("KO - Edit User Profil", async done => {
-//         const res21 = await request(app)
-//             .put("/api/UBER-EEDSI/account/")
-//             .send({ name: user1.name ,phone: user1.phone,password: user1.password })
-//             .set({ 'Authorization': user1Info.token })
-//             .set('Accept', 'application/json')
-//             .expect("Content-Type", /json/)
-//             .expect(400);
-//         expect(res21.body.success).toBe(fasle);
-//         expect(res21.body.id).toBe(undefined);
-//         expect(res21.body.name).toBe(undefined);
-//         expect(res21.body.email).toBe(undefined);
-//         expect(res21.body.connexionDate).toBe(undefined);
-//         expect(res21.body.createdAt).toBe(undefined);
-//         expect(res21.body.message).toBe('Invalid body');
+    test("KO - Edit User Profil", async done => {
+        /** Login for Delete*/
+        const res4 = await request(app)
+            .post("/api/UBER-EEDSI/account/login")
+            .send({email: user1.email, password : user1.newPassword})
+            .set('Accept', 'application/json')
+            .expect("Content-Type", /json/)
+            .expect(200);
+        expect(res4.body.success).toBe(true);
+        expect(res4.body.id).not.toBe(undefined);
+        expect(res4.body.name).not.toBe(undefined);
+        expect(res4.body.email).not.toBe(undefined);
+        expect(res4.body.connexionDate).not.toBe(undefined);
+        expect(res4.body.createdAt).not.toBe(undefined);
+        expect(res4.body.token).not.toBe(undefined);
+        expect(res4.body.refresh_token).not.toBe(undefined);
+        user1Info = res4.body;
+        
+        const res21 = await request(app)
+            .put("/api/UBER-EEDSI/account/")
+            .send({ name: user1.name , phone: user1.phone})
+            .set({ 'Authorization': user1Info.token })
+            .set('Accept', 'application/json')
+            .expect("Content-Type", /json/)
+            .expect(400);
+        expect(res21.body.success).toBe(false);
+        expect(res21.body.message).toBe('Invalid body');
 
         // const res22 = await request(app)
         //     .put("/api/UBER-EEDSI/account/")
@@ -605,10 +542,9 @@ describe('KO - Routes Account', () => {
     //         .expect("Content-Type", /json/)
     //         .expect(400);
     //     expect(res25.body.success).toBe(false);
-    
-    //     done();
-       
-    // });
+        done();
+    });
+
     test("KO - Delete Account", async done => {
         /** Login for Delete*/
         const res30 = await request(app)
@@ -618,13 +554,7 @@ describe('KO - Routes Account', () => {
             .expect("Content-Type", /json/)
             .expect(400);
         expect(res30.body.success).toBe(false);
-        expect(res30.body.id).toBe(undefined);
-        expect(res30.body.name).toBe(undefined);
-        expect(res30.body.email).toBe(undefined);
-        expect(res30.body.connexionDate).toBe(undefined);
-        expect(res30.body.createdAt).toBe(undefined);
-        expect(res30.body.token).toBe(undefined);
-        expect(res30.body.refresh_token).toBe(undefined);
+
 
         const res33 = await request(app)
             .post("/api/UBER-EEDSI/account/login")
@@ -633,13 +563,6 @@ describe('KO - Routes Account', () => {
             .expect("Content-Type", /json/)
             .expect(400);
         expect(res33.body.success).toBe(false);
-        expect(res33.body.id).toBe(undefined);
-        expect(res33.body.name).toBe(undefined);
-        expect(res33.body.email).toBe(undefined);
-        expect(res33.body.connexionDate).toBe(undefined);
-        expect(res33.body.createdAt).toBe(undefined);
-        expect(res33.body.token).toBe(undefined);
-        expect(res33.body.refresh_token).toBe(undefined);
 
         /** Delete Account*/
         const res31 = await request(app)
@@ -664,3 +587,36 @@ describe('KO - Routes Account', () => {
     });
 });
 
+describe('OK - Delete account after test', () => {
+
+    test("OK - Delete Account", async done => {
+        /** Login for Delete*/
+        const res4 = await request(app)
+            .post("/api/UBER-EEDSI/account/login")
+            .send({email: user1.email, password : user1.newPassword})
+            .set('Accept', 'application/json')
+            .expect("Content-Type", /json/)
+            .expect(200);
+        expect(res4.body.success).toBe(true);
+        expect(res4.body.id).not.toBe(undefined);
+        expect(res4.body.name).not.toBe(undefined);
+        expect(res4.body.email).not.toBe(undefined);
+        expect(res4.body.connexionDate).not.toBe(undefined);
+        expect(res4.body.createdAt).not.toBe(undefined);
+        expect(res4.body.token).not.toBe(undefined);
+        expect(res4.body.refresh_token).not.toBe(undefined);
+        user1Info = res4.body;
+
+        /** Delete Account*/
+        const res13 = await request(app)
+        .delete("/api/UBER-EEDSI/account/")
+        .send({id : user1Info.id, email: user1.email, password : user1.newPassword})
+        .set({ 'Authorization': res4.body.token })
+        .set('Accept', 'application/json')
+        .expect("Content-Type", /json/)
+        .expect(200);
+        expect(res13.body.success).toBe(true);
+        expect(res13.body.message).toBe('Successfully deleted');
+        done();
+    });
+});

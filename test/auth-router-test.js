@@ -16,8 +16,7 @@ router.get('/getVerifiedCode', async (req, res) => {
 
         res.status(200).send({ success: true, code: code });
     } catch (error) {
-        error.success = false;
-        res.status(400).send(error);
+        res.status(400).send({ success: false, message : error });
     }
 })
 
@@ -33,8 +32,7 @@ router.get('/getVerifiedCodeResetPassword', async (req, res) => {
 
         res.status(200).send({ success: true, code: code });
     } catch (error) {
-        error.success = false;
-        res.status(400).send(error);
+        res.status(400).send({ success: false, message : error });
     }
 })
 
@@ -50,8 +48,7 @@ router.get('/getVerifiedDoubleAuthentification', async (req, res) => {
 
         res.status(200).send({ success: true, code: code });
     } catch (error) {
-        error.success = false;
-        res.status(400).send(error);
+        res.status(400).send({ success: false, message : error });
     }
 })
 

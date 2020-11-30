@@ -25,7 +25,6 @@ router.post('/', Auth.AuthentificationUser, async(req, res) => {
         });
     }
     catch(error){
-        console.log(error);
         if(error.path === "_id") return res.status(400).send({success:false, message:"Invalid user ID"});
         return res.status(400).send({success: false,message: error});
     }
@@ -54,7 +53,6 @@ router.delete('/', Auth.AuthentificationUser, async(req, res) => {
         });
     }
     catch(error){
-        console.log(error);
         if(error.path === "_id") return res.status(400).send({success:false,message:"Invalid user or history ID"});
         return res.status(400).send({success:false,message:error}); // Il y a une erreur
     }

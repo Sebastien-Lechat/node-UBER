@@ -19,8 +19,7 @@ router.post('/register', async(req, res) => {
             id: user._id
         });
     } catch (error) {
-        error.success = false;
-        res.status(400).send(error);
+        res.status(400).send({ success: false, message : error });
     }
 })
 
@@ -53,8 +52,7 @@ router.post('/login', async(req, res) => {
 
         res.send(ret);
     } catch (error) {
-        error.success = false;
-        res.status(400).send(error);
+        res.status(400).send({ success: false, message : error });
     }
 })
 
@@ -73,8 +71,7 @@ router.post('/request-double-authentification', async(req, res) => {
         if (!await user.doubleAuthentification()) return res.status(400).send({ success: false });
         res.send({ success: true });
     } catch (error) {
-        error.success = false;
-        res.status(400).send(error);
+        res.status(400).send({ success: false, message : error });
     }
 })
 
@@ -91,8 +88,7 @@ router.post('/double-authentification', Auth.AuthentificationUser, async(req, re
 
         res.send({ success: true });
     } catch (error) {
-        error.success = false;
-        res.status(400).send(error);
+        res.status(400).send({ success: false, message : error });
     }
 })
 
@@ -110,8 +106,7 @@ router.post('/request-verify-email', async(req, res) => {
         sendEmail(user.email, 'no-reply', user.name, verify_email.code);
         res.send({ success: true });
     } catch (error) {
-        error.success = false;
-        res.status(400).send(error);
+        res.status(400).send({ success: false, message : error });
     }
 })
 
@@ -138,8 +133,7 @@ router.post('/verify-email', async(req, res) => {
 
         res.send({ success: true });
     } catch (error) {
-        error.success = false;
-        res.status(400).send(error);
+        res.status(400).send({ success: false, message : error });
     }
 })
 
@@ -201,6 +195,8 @@ router.post('/refresh-token', async(req, res) => {
     // Refresh Token
     try {
         const { id, refresh_token } = req.body;
+        
+        if (!id || !refresh_token ) return res.status(400).send({ success: false, message: 'Invalid body' });
 
         const user = await User.findOne({ _id: id });
         if (!user) return res.status(400).send({ success: false, message: 'Invalid id' });
@@ -213,8 +209,7 @@ router.post('/refresh-token', async(req, res) => {
         ret.refresh_token = await user.generateAuthRefreshToken();
         res.send(ret);
     } catch (error) {
-        error.success = false;
-        res.status(400).send(error);
+        res.status(400).send({ success: false, message : error });
     }
 })
 
@@ -234,8 +229,7 @@ router.post('/request-reset-password', async(req, res) => {
 
         return res.status(200).send({ success: true });
     } catch (error) {
-        error.success = false;
-        res.status(400).send(error);
+        res.status(400).send({ success: false, message : error });
     }
 })
 
@@ -263,8 +257,7 @@ router.post('/reset-password', async(req, res) => {
 
         return res.status(200).send({ success: true });
     } catch (error) {
-        error.success = false;
-        res.status(400).send(error);
+        res.status(400).send({ success: false, message : error });
     }
 })
 
@@ -284,8 +277,7 @@ router.post('/change-password', Auth.AuthentificationUser, async(req, res) => {
 
         return res.status(200).send({ success: true });
     } catch (error) {
-        error.success = false;
-        res.status(400).send(error);
+        res.status(400).send({ success: false, message : error });
     }
 })
 
@@ -309,8 +301,7 @@ router.post('/avatar', Auth.AuthentificationUser, async(req, res) => {
             })
         form.parse(req);
     } catch (error) {
-        error.success = false;
-        res.status(400).send(error);
+        res.status(400).send({ success: false, message : error });
     }
 })
 
@@ -320,8 +311,7 @@ router.get('/avatar', Auth.AuthentificationUser, async(req, res) => {
         if (user.avatar) return res.status(200).sendFile(__basedir + __avatarPath + user.avatar);
         return res.status(400).send({ success: true });
     } catch (error) {
-        error.success = false;
-        res.status(400).send(error);
+        res.status(400).send({ success: false, message : error });
     }
 })
 
@@ -334,8 +324,7 @@ router.post('/disconnect', Auth.AuthentificationUser, async(req, res) => {
         await req.user.save();
         res.status(200).send({ success: true, message: 'Successfully logout' });
     } catch (error) {
-        error.success = false;
-        res.status(500).send(error);
+        res.status(500).send({ success: false, message : error });
     }
 })
 
@@ -356,8 +345,7 @@ router.delete('/', Auth.AuthentificationUser,  async(req, res) => {
 
         res.status(200).send({ success: true, message: 'Successfully deleted' });
     } catch (error) {
-        error.success = false;
-        res.status(500).send(error);
+        res.status(500).send({ success: false, message : error });
     }
 })
 
