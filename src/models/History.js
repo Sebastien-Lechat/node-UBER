@@ -16,10 +16,6 @@ const historySchema = mongoose.Schema({
     waypoints : {
         type : String
     },
-    date: {
-        type: Date,
-        default: Date.now()
-    },
     moving_means : {
         type: String
     },
@@ -27,7 +23,7 @@ const historySchema = mongoose.Schema({
         type: String, 
         required : [true, "Map required"]
     }
-})
+}, { timestamps: true })
 
 const History = mongoose.model('history', historySchema);
 
