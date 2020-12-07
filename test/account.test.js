@@ -478,71 +478,82 @@ describe('KO - Routes Account', () => {
         expect(res21.body.success).toBe(false);
         expect(res21.body.message).toBe('Invalid body');
 
-        // const res22 = await request(app)
-        //     .put("/api/UBER-EEDSI/account/")
-        //     .send({ email: user1.email,
-        //             phone: user1.phone, 
-        //             password: user1.password })
-        //     .set({ 'Authorization': user1Info.token })
-        //     .set('Accept', 'application/json')
-        //     .expect("Content-Type", /json/)
-        //     .expect(400);
-        // expect(res22.body.success).toBe(fasle);
-        // expect(res22.body.id).toBe(undefined);
-        // expect(res22.body.name).toBe(undefined);
-        // expect(res22.body.email).toBe(undefined);
-        // expect(res22.body.connexionDate).toBe(undefined);
-        // expect(res22.body.createdAt).toBe(undefined);
-        // expect(res22.body.message).toBe('Invalid body');
+        const res22 = await request(app)
+            .put("/api/UBER-EEDSI/account/")
+            .send({ email: user1.email,phone: user1.phone, password: user1.password })
+            .set({ 'Authorization': user1Info.token })
+            .set('Accept', 'application/json')
+            .expect("Content-Type", /json/)
+            .expect(400);
+        expect(res22.body.success).toBe(false);
+        expect(res22.body.message).not.toBe('Invalid body');
 
-        // const res23 = await request(app)
-        //     .put("/api/UBER-EEDSI/account/")
-        //     .send({ email: user1.email,
-        //             name: user1.name ,
-        //             password: user1.password })
-        //     .set({ 'Authorization': user1Info.token })
-        //     .set('Accept', 'application/json')
-        //     .expect("Content-Type", /json/)
-        //     .expect(400);
-        // expect(res23.body.success).toBe(fasle);
-        // expect(res23.body.id).toBe(undefined);
-        // expect(res23.body.name).toBe(undefined);
-        // expect(res23.body.email).toBe(undefined);
-        // expect(res23.body.connexionDate).toBe(undefined);
-        // expect(res23.body.createdAt).toBe(undefined);
-        // expect(res23.body.message).toBe('Invalid body');
+        const res23 = await request(app)
+            .put("/api/UBER-EEDSI/account/")
+            .send({ email: user1.email,name: user1.name ,password: user1.password })
+            .set({ 'Authorization': user1Info.token })
+            .set('Accept', 'application/json')
+            .expect("Content-Type", /json/)
+            .expect(400);
+        expect(res23.body.success).toBe(false);
+        expect(res23.body.message).not.toBe('Invalid body');
    
 
-    // const res24 = await request(app)
-    //         .put("/api/UBER-EEDSI/account/")
-    //         .send({ email: user1.email,
-    //                 name: user1.name ,
-    //                 phone: user1.phone })
-    //         .set({ 'Authorization': user1Info.token })
-    //         .set('Accept', 'application/json')
-    //         .expect("Content-Type", /json/)
-    //         .expect(400);
-    //     expect(res24.body.success).toBe(fasle);
-    //     expect(res24.body.id).toBe(undefined);
-    //     expect(res24.body.name).toBe(undefined);
-    //     expect(res24.body.email).toBe(undefined);
-    //     expect(res24.body.connexionDate).toBe(undefined);
-    //     expect(res24.body.createdAt).toBe(undefined);
-    //     expect(res24.body.message).toBe('Invalid body');
-    //     done();
-    // });
-    // test("KO - Change password", async done => {
-    //     /** Change Password */
-    //     user1Info = res19.body;
-    //     const res25 = await request(app)
-    //         .post("/api/UBER-EEDSI/account/change-password")
-    //         .send({ email: user1.email })
-    //         .set({ 'Authorization': user1Info.token })
-    //         .set('Accept', 'application/json')
-    //         .expect("Content-Type", /json/)
-    //         .expect(400);
-    //     expect(res25.body.success).toBe(false);
+        const res24 = await request(app)
+                .put("/api/UBER-EEDSI/account/")
+                .send({ email: user1.email,name: user1.name ,phone: user1.phone })
+                .set({ 'Authorization': user1Info.token })
+                .set('Accept', 'application/json')
+                .expect("Content-Type", /json/)
+                .expect(400);
+            expect(res24.body.success).toBe(false);
+            expect(res24.body.message).toBe('Invalid body');
+            done();
+    });
+    
+    test("KO - Change password", async done => {
+        /** Change Password */
+        const res25 = await request(app)
+            .post("/api/UBER-EEDSI/account/change-password")
+            .send({email: user1.email, newPassword: user1.newPassword })
+            .set({ 'Authorization': user1Info.token })
+            .set('Accept', 'application/json')
+            .expect("Content-Type", /json/)
+            .expect(400);
+        expect(res25.body.success).toBe(false);
+        expect(res25.body.message).toBe('Invalid body');
+
+        const res26 = await request(app)
+            .post("/api/UBER-EEDSI/account/change-password")
+            .send({email: user1.email, newPassword: user1.newPassword })
+            .set({ 'Authorization': user1Info.token })
+            .set('Accept', 'application/json')
+            .expect("Content-Type", /json/)
+            .expect(400);
+        expect(res26.body.success).toBe(false);
+        expect(res26.body.message).toBe('Invalid body');
+
+        const res27 = await request(app)
+            .post("/api/UBER-EEDSI/account/change-password")
+            .send({oldPassword: 'vzervgzerg'})
+            .set({ 'Authorization': user1Info.token })
+            .set('Accept', 'application/json')
+            .expect("Content-Type", /json/)
+            .expect(400);
+        expect(res27.body.success).toBe(false);
+        expect(res27.body.message).not.toBe('Old password is wrong');
+
+        const res28 = await request(app)
+            .post("/api/UBER-EEDSI/account/change-password")
+            .send({})
+            .set({ 'Authorization': user1Info.token })
+            .set('Accept', 'application/json')
+            .expect("Content-Type", /json/)
+            .expect(400);
+        expect(res28.body.success).toBe(false);
+        expect(res28.body.message).toBe('Invalid body');
         done();
+        
     });
 
     test("KO - Delete Account", async done => {
@@ -620,3 +631,4 @@ describe('OK - Delete account after test', () => {
         done();
     });
 });
+
