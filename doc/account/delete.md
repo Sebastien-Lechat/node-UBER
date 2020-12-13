@@ -14,9 +14,7 @@ Used to delete a new account
 
 ```json
 {
-    "email": "[valid unique email]",
-    "password": "[valid password]",
-    "id": "[valid account id]",
+  "email": "[valid unique email]"
 }
 ```
 
@@ -24,9 +22,7 @@ Used to delete a new account
 
 ```json
 {
-    "email": "karen@gmail.com",
-    "password": "password987",
-    "id": "[valid account id]",
+  "email": "karen@gmail.com"
 }
 ```
 
@@ -38,7 +34,7 @@ Used to delete a new account
 
 ```json
 {
-    "success": true
+  "success": true
 }
 ```
 
@@ -52,11 +48,10 @@ Used to delete a new account
 
 ```json
 {
-    "success": false,
-    "error": "Field [X] is missing."
+  "success": false,
+  "error": "Field [X] is missing."
 }
 ```
-
 
 **Condition** : If one field isn't valid
 
@@ -64,7 +59,7 @@ Used to delete a new account
 
 ```json
 {
-    "success": false
+  "success": false
 }
 ```
 
@@ -74,8 +69,7 @@ Used to delete a new account
 
 ```json
 {
-    "success": false,
-    "error": "authentification failed"
+  "success": false,
+  "error": "authentification failed"
 }
 ```
-
