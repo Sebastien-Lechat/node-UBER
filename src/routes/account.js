@@ -332,17 +332,12 @@ router.post('/disconnect', Auth.AuthentificationUser, async(req, res) => {
 router.delete('/', Auth.AuthentificationUser,  async(req, res) => {
     // Log user out of the application
     try {
-        const { id, email, password } = req.body;
-        if (!id || !email || !password) return res.status(400).send({ success: false, message: 'Invalid credentials' });
-
-        const user = await User.findByCredentials(email, password);
-        if (!user || id != user.id || email !== user.email) {
-            return res.status(400).send({ success: false, message: 'Invalid credentials' });
-        }
-
-        if (user.avatar) fs.unlink(__basedir + __avatarPath + user.avatar, () => {});
+        const { email } = req.body;
+        let user = req.user;
+        if (!user || !user._id || !email) return res.status(400).send({ success: false, message: 'Invalid credentials' });
+        user = await User.findOne({ email: email });
+        // if (user.avatar) fs.unlink(__basedir + __avatarPath + user.avatar, () => {});
         await User.deleteOne(user);
-
         res.status(200).send({ success: true, message: 'Successfully deleted' });
     } catch (error) {
         res.status(500).send({ success: false, message : error });
