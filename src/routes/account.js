@@ -86,7 +86,7 @@ router.post('/double-authentification', Auth.AuthentificationUser, async(req, re
         user.double_authentification = { activated: allow }
         await user.save();
 
-        res.send({ success: true });
+        res.send({ success: true, activated: allow});
     } catch (error) {
         res.status(400).send({ success: false, message : error });
     }
