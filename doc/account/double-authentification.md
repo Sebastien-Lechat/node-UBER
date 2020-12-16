@@ -12,7 +12,7 @@ Used to able or disable double authentification
 
 ```json
 {
-    "allow": "[Boolean]"
+  "allow": "[Boolean]"
 }
 ```
 
@@ -20,7 +20,7 @@ Used to able or disable double authentification
 
 ```json
 {
-    "allow": "true"
+  "allow": true
 }
 ```
 
@@ -33,7 +33,7 @@ Used to able or disable double authentification
 ```json
 {
     "success": true,
-    "allow": true
+    "activated": true"/"false
 }
 ```
 
@@ -41,24 +41,24 @@ Used to able or disable double authentification
 
 ## Error Response
 
-**Condition** : If one field is missing
+**Condition** : If allow field is missing
 
 **Code** : `BAD REQUEST`
 
 ```json
 {
-    "success": false,
-    "error": "Field [X] is missing."
+  "success": false,
+  "message": "Invalid body"
 }
 ```
 
-**Condition** : If the user has not set any phone number
+**Condition** : If activation doesn't work
 
 **Code** : `BAD REQUEST`
 
 ```json
 {
-    "success": false,
-    "error": "No phone number to send double authentification"
+  "success": false,
+  "message": "[MongoDB error]"
 }
 ```

@@ -12,8 +12,8 @@ Used to request to send a code by phone for double authentification.
 
 ```json
 {
-    "email": "[valid unique email]",
-    "password": "[valid password]"
+  "email": "[valid unique email]",
+  "password": "[valid password]"
 }
 ```
 
@@ -21,8 +21,8 @@ Used to request to send a code by phone for double authentification.
 
 ```json
 {
-    "email": "karen@gmail.com",
-    "password": "S2PH28TG6+D8ee"
+  "email": "karen@gmail.com",
+  "password": "S2PH28TG6+D8ee"
 }
 ```
 
@@ -34,7 +34,7 @@ Used to request to send a code by phone for double authentification.
 
 ```json
 {
-    "success": true
+  "success": true
 }
 ```
 
@@ -42,13 +42,73 @@ Used to request to send a code by phone for double authentification.
 
 ## Error Response
 
-**Condition** : If one field is missing
+**Condition** : If email field is missing
 
 **Code** : `BAD REQUEST`
 
 ```json
 {
-    "success": false,
-    "error": "Field [X] is missing."
+  "success": false,
+  "message": "Missing email"
+}
+```
+
+---
+
+## Error Response
+
+**Condition** : If password field is missing
+
+**Code** : `BAD REQUEST`
+
+```json
+{
+  "success": false,
+  "message": "Missing password"
+}
+```
+
+---
+
+## Error Response
+
+**Condition** : If we send invalid email or password
+
+**Code** : `BAD REQUEST`
+
+```json
+{
+  "success": false,
+  "message": "Login failed! Check authentication credentials"
+}
+```
+
+---
+
+## Error Response
+
+**Condition** : If email is not verified
+
+**Code** : `BAD REQUEST`
+
+```json
+{
+  "success": false,
+  "message": "Email address not verified"
+}
+```
+
+---
+
+## Error Response
+
+**Condition** : Internal server Error
+
+**Code** : `500`
+
+```json
+{
+  "success": false,
+  "message": "[MongoDB error]"
 }
 ```
