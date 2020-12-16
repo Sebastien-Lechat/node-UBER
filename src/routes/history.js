@@ -8,11 +8,6 @@ const User = require('../models/User');
 router.post('/', Auth.AuthentificationUser, async(req, res) => {
     // Adding a new history
     try{
-        const user = req.user._id;
-        await User.findOne({ _id: user._id });
-        
-        req.body.user_id = user._id;
-
         const history = new History(req.body);
         await history.save();
 
@@ -54,7 +49,7 @@ router.delete('/', Auth.AuthentificationUser, async(req, res) => {
     }
     catch(error){
         if(error.path === "_id") return res.status(400).send({success:false,message:"Invalid user or history ID"});
-        return res.status(400).send({success:false,message:error}); // Il y a une erreur
+        return res.status(500).send({success:false,message:error}); // Il y a une erreur
     }
 })
 
@@ -66,7 +61,7 @@ router.get('/', Auth.AuthentificationUser,  async(req, res) => {
 
         const userHistoric =await History.find({ user_id: user._id});
         
-        userHistoric.map((item) => {
+        userHistoric.map((item) => { 
             item.user_id = undefined;
             item.__v = undefined;
             return item;
@@ -77,7 +72,7 @@ router.get('/', Auth.AuthentificationUser,  async(req, res) => {
         res.send(ret);
     }
     catch(error){
-        return res.status(400).send({success:false,message:error});
+        return res.status(400).send({success:false, message:error});
     }
 })
 
