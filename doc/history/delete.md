@@ -68,7 +68,7 @@ Used to delete a history
 
 ---
 
-**Condition** : If delete dosen't work
+**Condition** : If delete doesn't work
 
 **Code** : `500`
 
