@@ -46,6 +46,6 @@ UBER-EEDSI API used by Website.
 
 ---
 
-## History
+## Map
 
 - [Get optimised route](doc/map/direction.md) : `POST /direction`

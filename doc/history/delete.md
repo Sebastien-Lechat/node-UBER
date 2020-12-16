@@ -11,7 +11,9 @@ Used to delete a history
 **Data constraints**
 
 ```json
-{}
+{
+  "id": "[valid history id]"
+}
 ```
 
 ---
@@ -19,7 +21,9 @@ Used to delete a history
 **Data example**
 
 ```json
-{}
+{
+  "id": "48q4dqzdqz8d49q84d65qqzd"
+}
 ```
 
 ---
@@ -38,18 +42,39 @@ Used to delete a history
 
 ## Error Response
 
-**Condition** :
+**Condition** : If we send invalid user or history ID
 
 **Code** : `BAD REQUEST`
 
 ```json
-{}
+{
+  "success": false,
+  "message": "Invalid user or history ID"
+}
 ```
 
-**Condition** :
+---
+
+**Condition** : If we don't send history ID
 
 **Code** : `BAD REQUEST`
 
 ```json
-{}
+{
+  "success": false,
+  "message": "History ID is missing"
+}
+```
+
+---
+
+**Condition** : If delete dosen't work
+
+**Code** : `500`
+
+```json
+{
+  "success": false,
+  "message": "[MongoDB error]"
+}
 ```

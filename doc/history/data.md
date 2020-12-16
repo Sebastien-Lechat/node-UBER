@@ -11,7 +11,7 @@ Used to get history of a user
 **Data constraints**
 
 ```json
-{}
+NONE
 ```
 
 ---
@@ -19,22 +19,23 @@ Used to get history of a user
 **Data example**
 
 ```json
-{}
+NONE
 ```
 
 ---
 
 ## Success Response
 
-**Code** : `201`
+**Code** : `200`
 
 ```json
 {
-  "date" : "2020-11-20T12:51:31.921+00:00",
+  "_id": "2jga19hfaoK",
   "departure_location": "Paris",
   "arrival_location": "Boulogne",
   "map": "https://www.google.fr/maps/place/Ch%C3%A2telet+-+Les+Halles/@48.8620508,2.3449645,17z/data=!3m1!4b1!4m5!3m4!1s0x47e66e18c54f2257:0xb0fc90f7e38cba9f!8m2!3d48.8620508!4d2.3471532",
-  "history_id": "2jga19hfaoK"
+  "createdAt": "2020-12-14T12:50:42.142Z",
+  "updatedAt": "2020-12-14T12:50:42.142Z"
 }
 ```
 
@@ -48,19 +49,7 @@ Used to get history of a user
 
 ```json
 {
-  "success" : false,
-  "error" : "mongoDB error"
+  "success": false,
+  "message": "[MongoDB error]"
 }
 ```
-**Condition** : If the user_id is invalid
-
-**Code** : `400`
-
-```json
-{
-  "success" : false,
-  "error" : "Invalid user ID"
-}
-```
-
-
