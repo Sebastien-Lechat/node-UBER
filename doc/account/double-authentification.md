@@ -33,7 +33,7 @@ Used to able or disable double authentification
 ```json
 {
     "success": true,
-    "activated": true"/"false
+    "activated": true or false
 }
 ```
 
