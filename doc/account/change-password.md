@@ -44,6 +44,39 @@ Used to change password
 
 ## Error Response
 
+
+**Condition** : If one field is missing (Email , Old Password and New Password)
+
+**Code** : `BAD REQUEST`
+
+```json
+{
+    "success": false,
+    "error": "One field is missing"
+}
+```
+**Condition** : If the old password don't match to the database
+
+**Code** : `BAD REQUEST`
+
+```json
+{
+    "success": false,
+    "error": "Old password is wrong"
+}
+```
+**Condition** : If the email don't match to the database
+
+**Code** : `BAD REQUEST`
+
+```json
+{
+    "success": false,
+    "error": "Email is wrong"
+}
+```
+
+
 **Condition** : If one field in missing or Invalid
 
 **Code** : `BAD REQUEST`

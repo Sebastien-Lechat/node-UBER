@@ -48,6 +48,40 @@ Used when current token is no longer valid.
 
 ## Error Response
 
+**Condition** : If id or refresh token is empty
+
+**Code** : `BAD REQUEST`
+
+```json
+{
+    "success": false,
+    "error": "Invalid body"
+}
+```
+
+**Condition** : If user don't exist on database
+
+**Code** : `BAD REQUEST`
+
+```json
+{
+    "success": false,
+    "error": "Invalid id"
+}
+```
+
+
+**Condition** : If refresh token is invalid
+
+**Code** : `BAD REQUEST`
+
+```json
+{
+    "success": false,
+    "error": "Invalid token"
+}
+```
+
 **Condition** : If authentification failed
 
 **Code** : `BAD REQUEST`

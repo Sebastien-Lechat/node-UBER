@@ -17,8 +17,8 @@ Not all data are mandatory.
 {
     "name": "[Current name or new name]",
     "email": "[Current email or new valid email]",
-    "picture": "[Current picture or new valid picture]",
-    "phone": "[Current password or new valid password]",
+    "picture?": "[Current picture or new valid picture]",
+    "phone?": "[Current phone or new valid password]",
     "password": "[Current password, used to validate identity]"
 }
 ```
@@ -29,8 +29,8 @@ Not all data are mandatory.
 {
     "name": "Karen Paul",
     "email": "karen@gmail.com",
-    "picture": "[raw picture]",
-    "phone": "+33611223344",
+    "picture?": "[raw picture]",
+    "phone?": "+33611223344",
     "password": "a987YRF2HYOP8"
 }
 ```
@@ -55,26 +55,37 @@ Not all data are mandatory.
 
 ## Error Response
 
-**Condition** : If one field is missing
+**Condition** : If password is missing
 
 **Code** : `BAD REQUEST`
 
 ```json
 {
     "success": false,
-    "error": "Field [X] is missing."
+    "error": "Password missing"
+}
+```
+
+**Condition** : If password doesn't match de password in database
+
+**Code** : `BAD REQUEST`
+
+```json
+{
+    "success": false,
+    "error": "Invalid credentials"
 }
 ```
 
 
-**Condition** : If one field isn't valid
+**Condition** : If all fields are empty
 
 **Code** : `BAD REQUEST`
 
 ```json
 {
     "success": false,
-    "error": "Field [X] is not valid."
+    "error": "Invalid body"
 }
 ```
 

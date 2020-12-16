@@ -41,7 +41,7 @@ router.post('/login', async(req, res) => {
             const time = (Date.now() - user.double_authentification.date) / 1000;
             if (time > 600) return res.status(400).send({ success: false, message: 'Code is no longer valid' });
             if (user.double_authentification.code != code) {
-                return res.status(400).send({ success: false, message: 'Double authentification is activated, wrond code' });
+                return res.status(400).send({ success: false, message: 'Wrong code' });
             }
         }
 
@@ -154,7 +154,7 @@ router.put('/', Auth.AuthentificationUser, async(req, res) => {
 
         const { email, name, phone, picture, password } = req.body;
 
-        if (!password) return res.status(400).send({ success: false, message: 'Invalid body' });
+        if (!password) return res.status(400).send({ success: false, message: 'Password missing' });
         const isPasswordMatch = await bcrypt.compare(password, user.password);
         if (!isPasswordMatch) return res.status(400).send({ success: false, message: 'Invalid credentials' });
 
@@ -162,7 +162,6 @@ router.put('/', Auth.AuthentificationUser, async(req, res) => {
             user.verify_email = undefined;
             user.double_authentification = undefined;
         }
-        // if (phone && phone != user.phone) user.verify_phone = undefined;
 
         if (!email && !name && !phone && !picture) return res.status(400).send({ success: false, message: 'Invalid body' });
         if (email) user.email = email;
@@ -266,11 +265,11 @@ router.post('/change-password', Auth.AuthentificationUser, async(req, res) => {
     try {
         const { email, oldPassword, newPassword } = req.body;
         const user = req.user;
-        if (!email || !oldPassword || !newPassword) return res.status(400).send({ success: false, message: "Invalid body" });
+        if (!email || !oldPassword || !newPassword) return res.status(400).send({ success: false, message: "One field is missing" });
 
         const isPasswordMatch = await bcrypt.compare(oldPassword, user.password);
         if (!isPasswordMatch) throw { success: false, message: "Old password is wrong" };
-        if (email !== user.email) throw { success: false };
+        if (email !== user.email) throw { success: false, message: "Email is wrong" };
 
         user.password = newPassword;
         await user.save();
