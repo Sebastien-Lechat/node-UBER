@@ -8,7 +8,7 @@ UBER-EEDSI API used by Website.
 
 ## Account
 
-- [Create account](doc/account/create.md) : `POST /account`
+- [Create account](doc/account/create.md) : `POST /account/register`
 - [Login](doc/account/login.md) : `POST /account/login`
 - [Get account informations](doc/account/data.md) : `GET /account`
 - [Edit account](doc/account/edit.md) : `PUT /account`
@@ -41,3 +41,11 @@ UBER-EEDSI API used by Website.
 - [Create history](doc/history/create.md) : `POST /history`
 - [Get all history](doc/history/data.md) : `GET /history`
 - [Delete history](doc/history/delete.md) : `DELETE /history`
+
+---
+
+---
+
+## History
+
+- [Get optimised route](doc/map/direction.md) : `POST /direction`
