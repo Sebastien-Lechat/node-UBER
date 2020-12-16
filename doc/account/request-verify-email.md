@@ -46,6 +46,18 @@ Used to get an email with a code to verify your email adress. The code is valid 
 
 ```json
 {
-    "success": false
+    "success": false, 
+    "message": "Invalid body"
+}
+```
+
+**Condition** : If the email verification code has not been generated
+
+**Code** : `500`
+
+```json
+{
+  "success": false,
+  "error": "Can't generate verify email code"
 }
 ```

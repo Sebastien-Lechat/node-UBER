@@ -48,7 +48,8 @@ Used to verify your email adresse after creating an account or after changing yo
 
 ```json
 {
-    "success": false
+    "success": false,
+    "message": "Invalid body"
 }
 ```
 
@@ -60,5 +61,27 @@ Used to verify your email adresse after creating an account or after changing yo
 {
     "success": false,
     "message": "Code is no longer valid"
+}
+```
+
+**Condition** : If an email has already been verified
+
+**Code** : `BAD REQUEST`
+
+```json
+{
+    "success": false,
+    "message": "This email is already verified"
+}
+```
+
+**Condition** : If the code entered is not correct
+
+**Code** : `BAD REQUEST`
+
+```json
+{
+    "success": false,
+    "message": "Wrong code"
 }
 ```
