@@ -23,7 +23,7 @@ router.post('/direction'/*, Auth.AuthentificationUser*/, async(req, res) => {
         }
 
         client.snapToRoads({
-            key: 'AIzaSyB1EK8qrQOybJbjjDzLcbULnEiBIVTtHOA',
+            key: '',
         })
 
 
