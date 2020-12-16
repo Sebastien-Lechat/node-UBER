@@ -476,7 +476,7 @@ describe('KO - Routes Account', () => {
             .expect("Content-Type", /json/)
             .expect(400);
         expect(res21.body.success).toBe(false);
-        expect(res21.body.message).toBe('Invalid body');
+        expect(res21.body.message).toBe('Password missing');
 
         const res22 = await request(app)
             .put("/api/UBER-EEDSI/account/")
@@ -507,7 +507,7 @@ describe('KO - Routes Account', () => {
                 .expect("Content-Type", /json/)
                 .expect(400);
             expect(res24.body.success).toBe(false);
-            expect(res24.body.message).toBe('Invalid body');
+            expect(res24.body.message).toBe('Password missing');
             done();
     });
     
@@ -521,7 +521,7 @@ describe('KO - Routes Account', () => {
             .expect("Content-Type", /json/)
             .expect(400);
         expect(res25.body.success).toBe(false);
-        expect(res25.body.message).toBe('Invalid body');
+        expect(res25.body.message).toBe('One field is missing');
 
         const res26 = await request(app)
             .post("/api/UBER-EEDSI/account/change-password")
@@ -531,7 +531,7 @@ describe('KO - Routes Account', () => {
             .expect("Content-Type", /json/)
             .expect(400);
         expect(res26.body.success).toBe(false);
-        expect(res26.body.message).toBe('Invalid body');
+        expect(res26.body.message).toBe('One field is missing');
 
         const res27 = await request(app)
             .post("/api/UBER-EEDSI/account/change-password")
@@ -551,7 +551,7 @@ describe('KO - Routes Account', () => {
             .expect("Content-Type", /json/)
             .expect(400);
         expect(res28.body.success).toBe(false);
-        expect(res28.body.message).toBe('Invalid body');
+        expect(res28.body.message).toBe('One field is missing');
         done();
         
     });
