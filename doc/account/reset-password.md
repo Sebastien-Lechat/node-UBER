@@ -52,7 +52,8 @@ If code isn't valid : User has 3 change to get the right code
 
 ```json
 {
-    "success": false
+    "success": false, 
+    "message": "Invalid body"
 }
 ```
 
@@ -64,5 +65,16 @@ If code isn't valid : User has 3 change to get the right code
 {
     "success": false,
     "message": "Code is no longer valid"
+}
+```
+
+**Condition** : If a wrong code is sent
+
+**Code** : `BAD REQUEST`
+
+```json
+{
+    "success": false,
+    "message": "Code isn't valid"
 }
 ```
