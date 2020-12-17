@@ -22,6 +22,7 @@
     "express-rate-limit": "^5.2.3",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.9.26",
+    "node-geometry-library": "^1.2.3",
     "nodemailer": "^6.4.11",
     "pm2": "^4.5.0",
     "uuid": "^8.3.0",
