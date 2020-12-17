@@ -4,12 +4,10 @@ const router = express.Router();
 
 const {Client} = require("@googlemaps/google-maps-services-js");
 
-const {SphericalUtil, PolyUtil} = require("node-geometry-library");
-
 const client = new Client({});
 
 
-router.post('/direction'/*, Auth.AuthentificationUser*/, async(req, res) => {
+router.post('/direction', Auth.AuthentificationUser, async(req, res) => {
     try {
         const {origin, destination, waypoints} = req.body;
         if (! origin || !destination || !waypoints) res.status(400).send({success: false, message: 'Invalid body'});
