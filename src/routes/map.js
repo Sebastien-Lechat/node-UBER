@@ -2,15 +2,26 @@ const express = require('express');
 const Auth = require('../middleware/auth');
 const router = express.Router();
 
-const {Client} = require("@googlemaps/google-maps-services-js");
+const {Client, TravelMode} = require("@googlemaps/google-maps-services-js");
 
 const client = new Client({});
 
 
-router.post('/direction', Auth.AuthentificationUser, async(req, res) => {
+router.post('/direction'/*, Auth.AuthentificationUser*/, async(req, res) => {
     try {
-        const {origin, destination, waypoints} = req.body;
-        if (! origin || !destination || !waypoints) res.status(400).send({success: false, message: 'Invalid body'});
+        const {origin, destination, waypoints, mode} = req.body;
+        if (! origin || !destination || !waypoints || !mode) res.status(400).send({success: false, message: 'Invalid body'});
+        if (mode !== 'driving' && (mode !== 'walking') && (mode !== 'bicycling')) res.status(400).send({success: false, message: 'Invalid travel mode'});
+
+        let googleMode;
+
+        if (mode === 'driving') {
+            googleMode = TravelMode.driving;
+        } else if (mode === 'walking') {
+            googleMode = TravelMode.walking;
+        } else {
+            googleMode = TravelMode.bicycling;
+        }
 
         // Création d'un tableau contenant tous les waypoints et le point d'arrivé
         let allDestination = []
@@ -47,7 +58,8 @@ router.post('/direction', Auth.AuthentificationUser, async(req, res) => {
                         origin: origin,
                         destination: allRoutes[i][1],
                         waypoints: allRoutes[i][0],
-                        optimize: true
+                        optimize: true,
+                        mode: googleMode,
                     }
                 })
                 .then((response) => {
@@ -90,7 +102,7 @@ router.post('/direction', Auth.AuthentificationUser, async(req, res) => {
                 if (i === bestDest.length - 1) resDestination = resRoutes[index].data.routes[0].legs[i].end_address
             }
 
-            res.send({success: true,origin: origin, destination: resDestination, waypoints: resWaypoint});
+            res.send({success: true,origin: origin, destination: resDestination, waypoints: resWaypoint, duration: listDuration[index]});
         })
 
     } catch (error) {
