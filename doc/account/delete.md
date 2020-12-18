@@ -34,7 +34,8 @@ Used to delete a new account
 
 ```json
 {
-  "success": true
+  "success": true, 
+  "message": "Successfully deleted"
 }
 ```
 
@@ -59,7 +60,8 @@ Used to delete a new account
 
 ```json
 {
-  "success": false
+  "success": false,
+  "message": "Invalid credentials"
 }
 ```
 

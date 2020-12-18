@@ -48,7 +48,8 @@ Used to get an email or an sms with a code to reset your forgotten password. The
 
 ```json
 {
-    "success": false
+    "success": false, 
+    "message": "Invalide body"
 }
 ```
 
@@ -60,5 +61,15 @@ Used to get an email or an sms with a code to reset your forgotten password. The
 {
     "success": false,
     "message": "Can't send sms. The user has not set any recovery phone number."
+}
+```
+**Condition** : If the password reset code has not been generated
+
+**Code** : `500`
+
+```json
+{
+    "success": false,
+    "message": "Can't generate password code"
 }
 ```
