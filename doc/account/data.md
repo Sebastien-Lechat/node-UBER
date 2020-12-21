@@ -33,7 +33,7 @@ NONE
     "name": "Karen Paul",
     "email": "karen@gmail.com",
     "phone": "+33611223344",
-    "picture": "[raw picture]", // Will be added later
+    "picture?": "[raw picture]", // Will be added later
     "group": "[valid group id]"
 }
 ```
