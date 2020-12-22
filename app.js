@@ -13,7 +13,7 @@ app.use(express.json());
 
 app.use((error, request, response, next) => {
     if (error !== null) {
-        return response.json({ success: false, message: 'Invalid json' });
+        return response.status(400).json({ success: false, message: 'Invalid json' });
     }
     return next();
 });

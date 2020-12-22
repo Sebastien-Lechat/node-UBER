@@ -14,7 +14,9 @@ Used to create a new history
 {
   "departure_location": "[valid departure location]",
   "arrival_location": "[valid arrival location]",
-  "map": "[valid map link]"
+  "waypoints?": ["valid array of waypoints"],
+  "duration": "[valid duration]",
+  "mode": "[valid google travel mode]"
 }
 ```
 
@@ -26,7 +28,9 @@ Used to create a new history
 {
   "departure_location": "Paris",
   "arrival_location": "Boulogne",
-  "map": "https://www.google.fr/maps/place/Ch%C3%A2telet+-+Les+Halles/@48.8620508,2.3449645,17z/data=!3m1!4b1!4m5!3m4!1s0x47e66e18c54f2257:0xb0fc90f7e38cba9f!8m2!3d48.8620508!4d2.3471532"
+  "waypoints?": [{ "location": "Marseille" }, { "Location": "Lille" }],
+  "duration": "3h 45min",
+  "mode": "driving"
 }
 ```
 
@@ -54,5 +58,20 @@ Used to create a new history
 {
   "success": false,
   "message": "[MongoDB Error]"
+}
+```
+
+---
+
+## Error Response
+
+**Condition** : If we send an invalid mode
+
+**Code** : `400`
+
+```json
+{
+  "success": false,
+  "message": "Invalid travel mode"
 }
 ```

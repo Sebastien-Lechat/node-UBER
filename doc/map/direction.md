@@ -17,7 +17,8 @@ Not all data are mandatory.
 {
   "origin": "[valid origin address]",
   "destination": "[valid destination address]",
-  "waypoints?": ["Array of valid waypoints address"]
+  "waypoints?": ["Array of valid waypoints address"],
+  "mode": "[valid google travel mode]"
 }
 ```
 
@@ -29,7 +30,8 @@ Not all data are mandatory.
 {
   "origin": "Paris",
   "destination": "Bordeaux",
-  "waypoints?": ["Juvisy", "Marseille", "Lille"]
+  "waypoints?": ["Juvisy", "Marseille", "Lille"],
+  "mode": "driving"
 }
 ```
 
@@ -57,5 +59,35 @@ Not all data are mandatory.
 {
   "success": false,
   "message": "Invalid body"
+}
+```
+
+---
+
+## Error Response
+
+**Condition** : If we send an invalid mode
+
+**Code** : `400`
+
+```json
+{
+  "success": false,
+  "message": "Invalid travel mode"
+}
+```
+
+---
+
+## Error Response
+
+**Condition** : If we send more than 23 waypoints
+
+**Code** : `400`
+
+```json
+{
+  "success": false,
+  "message": "To much waypoints"
 }
 ```
