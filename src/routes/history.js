@@ -8,6 +8,8 @@ const User = require('../models/User');
 router.post('/', Auth.AuthentificationUser, async(req, res) => {
     // Adding a new history
     try{
+        if (req.body.mode !== 'driving' && (req.body.mode !== 'walking') && (req.body.mode !== 'bicycling')) res.status(400).send({success: false, message: 'Invalid travel mode'});
+
         const user = req.user._id;
         req.body.user_id = user._id;
 

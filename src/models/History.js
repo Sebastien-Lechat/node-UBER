@@ -14,14 +14,15 @@ const historySchema = mongoose.Schema({
         required : [true, "Arrival location required"]
     },
     waypoints : {
-        type : String
+        type : Array
     },
-    moving_means : {
-        type: String
+    duration : {
+        type: String,
+        required : [true, "Duration is required"]
     },
-    map : {
-        type: String, 
-        required : [true, "Map required"]
+    mode : {
+        type: String,
+        required : [true, "Mode is required"]
     }
 }, { timestamps: true })
 

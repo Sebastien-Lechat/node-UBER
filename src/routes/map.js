@@ -7,10 +7,11 @@ const {Client, TravelMode} = require("@googlemaps/google-maps-services-js");
 const client = new Client({});
 
 
-router.post('/direction'/*, Auth.AuthentificationUser*/, async(req, res) => {
+router.post('/direction', Auth.AuthentificationUser, async(req, res) => {
     try {
         const {origin, destination, waypoints, mode} = req.body;
         if (! origin || !destination || !waypoints || !mode) res.status(400).send({success: false, message: 'Invalid body'});
+        if (waypoints.length >= 23) res.status(400).send({success: false, message: 'To much waypoints'});
         if (mode !== 'driving' && (mode !== 'walking') && (mode !== 'bicycling')) res.status(400).send({success: false, message: 'Invalid travel mode'});
 
         let googleMode;
