@@ -36,7 +36,8 @@ const user1 = {
 let history1 = {
     departure_location : 'Paris',
     arrival_location : 'Boulogne',
-    map : 'url123'
+    duration: '23h 30min',
+    mode: 'driving'
 }
 
 const user1Credentials = {
@@ -120,7 +121,8 @@ describe('OK - Routes History', () => {
             .send({
                 departure_location : history1.departure_location,
                 arrival_location: history1.arrival_location, 
-                map : history1.map
+                duration: history1.duration,
+                mode: history1.mode
             })
             .set('Accept', 'application/json')
             .set({ 'Authorization': user1Info.token })
@@ -169,7 +171,8 @@ describe('KO - Routes History', () => {
             .post("/api/UBER-EEDSI/history/")
             .send({
                 arrival_location: history1.arrival_location, 
-                map : history1.map
+                mode : history1.mode,
+                duration: history1.duration,
             })
             .set('Accept', 'application/json')
             .set({ 'Authorization': user1Info.token })
