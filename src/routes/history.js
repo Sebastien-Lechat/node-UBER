@@ -19,14 +19,16 @@ router.post('/', Auth.AuthentificationUser, async(req, res) => {
         history.user_id = undefined;
         history.__v = undefined;
 
+        console.log(1);
         res.status(201).send({
             success: true,
             history : history,
         });
     }
     catch(error){
+        console.log(error.path);
         if(error.path === "_id") return res.status(400).send({success:false, message:"Invalid user ID"});
-        return res.status(400).send({success: false,message: error});
+        return res.status(400).send({success: false, message: error});
     }
 })
 
