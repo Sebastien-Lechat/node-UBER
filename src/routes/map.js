@@ -78,6 +78,8 @@ router.post('/direction', Auth.AuthentificationUser, async(req, res) => {
                     }
                 })
                 .catch((error) => {
+                    console.log(1);
+                    console.log(error);
                     res.status(500).send({success: false, message: error});
                 });
             }
@@ -107,6 +109,8 @@ router.post('/direction', Auth.AuthentificationUser, async(req, res) => {
         })
 
     } catch (error) {
+        console.log(2);
+        console.log(error);
         res.status(500).send({success: false, message: error});
     }
 })
