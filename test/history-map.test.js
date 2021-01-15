@@ -40,6 +40,13 @@ let history1 = {
     mode: 'driving'
 }
 
+const map = {
+    origin: 'Paris', 
+    destination: 'Marseille',
+     waypoints: ['Lille', 'Turin', 'Genève', 'Zurich'], 
+     mode: 'driving'
+}
+
 const user1Credentials = {
     email: user1.email,
     password: user1.password,
@@ -162,6 +169,23 @@ describe('OK - Routes History', () => {
         expect(res1.body.success).toBe(true);
         done();
     });
+
+    test("OK - Create Map", async done => {
+        // Création d'une direction
+        const res1 = await request(app)
+            .post("/api/UBER-EEDSI/map/direction")
+            .send(map)
+            .set({ 'Authorization': user1Info.token })
+            .set('Accept', 'application/json')
+            .expect("Content-Type", /json/)
+            .expect(200);
+        expect(res1.body.success).toBe(true);
+        expect(res1.body.origin).not.toBe(undefined);
+        expect(res1.body.destination).not.toBe(undefined);
+        expect(res1.body.waypoints).not.toBe(undefined);
+        expect(res1.body.duration).not.toBe(undefined);
+        done();
+    });
 });
 
 describe('KO - Routes History', () => {
@@ -232,6 +256,35 @@ describe('KO - Routes History', () => {
             .expect(401);
         expect(res.body.success).toBe(false);
         expect(res.body.message).toBe("Not authorized to access this resource");
+        done();
+    });
+
+    test("KO - Create Map", async done => {
+        // Création d'une direction
+        const res1 = await request(app)
+            .post("/api/UBER-EEDSI/map/direction")
+            .send({})
+            .set({ 'Authorization': user1Info.token })
+            .set('Accept', 'application/json')
+            .expect("Content-Type", /json/)
+            .expect(400);
+        expect(res1.body.success).toBe(false);
+        expect(res1.body.message).toBe('Invalid body');
+        done();
+    });
+
+    test("KO - Create Map", async done => {
+        // Création d'une direction
+        map.mode = 'xxxxxxx'
+        const res1 = await request(app)
+            .post("/api/UBER-EEDSI/map/direction")
+            .send(map)
+            .set({ 'Authorization': user1Info.token })
+            .set('Accept', 'application/json')
+            .expect("Content-Type", /json/)
+            .expect(400);
+        expect(res1.body.success).toBe(false);
+        expect(res1.body.message).toBe('Invalid travel mode');
         done();
     });
 });
